@@ -1,6 +1,6 @@
 from mpmath import *
-from scipy import optimize
 from domain import Domain
+from math import isinf
 
 def bounce(domain, inc_theta, inc_angle):
     """ Returns the next point after an edge collision at inc_angle, the 
@@ -62,45 +62,71 @@ def bounce_q_times(domain, q, inc_theta, inc_angle):
     i = 0
     while i < q:
         cur_pt = bounce(domain, cur_pt[0], cur_pt[1])
-        if (cur_pt[0] > fadd(inc_theta, pi)) and (i != q - 1):
-            return (inf, inf)
         i += 1
     return cur_pt
 
-def check_q_bounce_angle(domain, q, inc_theta, inc_angle):
-    """ Returns the difference between inc_theta after the qth and q + 1 st 
-        bounces. This is a helper to generate_orbit_odd.
+def bounce_q_times_top_half(domain, q, inc_theta, inc_angle):
+    """ Return the value obtained by iteratively applying bounce q times. 
     """
 
-    last_bounce = bounce_q_times(domain, q, inc_theta, inc_angle)
-    following_bounce = bounce(domain, last_bounce[0], last_bounce[1])
+    cur_pt = (inc_theta, inc_angle)
+    penalty = 0
+    i = 0
+    while i < q:
+        cur_pt = bounce(domain, cur_pt[0], cur_pt[1])
 
-    return fsub(fadd(last_bounce[0], following_bounce[0]), fmul(2, pi))
+        # Incompatible bounce
+        if (pi < fabs(fsub(inc_theta, cur_pt[0]))):
+            penalty = fadd(penalty, fsub(fabs(fsub(inc_theta, cur_pt[0])), pi))
+
+        i += 1
+    return (cur_pt, penalty)
+
+def check_q_bounce_angle(domain, q, inc_theta, inc_angle):
+    """ Returns the difference between inc_theta after the qth and q + 1 st 
+        bounces along with the penalty incurred. This is a helper to generate_orbit_odd.
+    """
+
+    last_bounce = bounce_q_times_top_half(domain, q, inc_theta, inc_angle)    
+    following_bounce = bounce(domain, last_bounce[0][0], last_bounce[0][1])
+
+    return (fsub(fadd(last_bounce[0][0], following_bounce[0]), fmul(2, pi)), last_bounce[1])
+
 
 
 def generate_orbit_odd(domain, q, start_theta):
-    """ Return an angle theta such that bounce is periodic of period q
+    """ Returns an angle theta such that bounce is periodic of period q
         on input theta, beginning at the marked point. Assumed that q is 
         odd.
     """
 
     bounce_end_theta_check = lambda bounce_angle: check_q_bounce_angle(domain, (q - 1) / 2, start_theta, bounce_angle)
     newton_start_point = 0
-    found_root = 0
+    found_root = [0]
 
     # Make sure the root found isn't the point of incidence.
     # Use density of irrational rotations of the circle to pick another
     # starting point
-    while almosteq(found_root, start_theta) or abs(fsub(found_root, start_theta)) >= fdiv(pi, 2):
+    while almosteq(found_root[0], start_theta) or abs(fsub(found_root[0], start_theta)) >= fdiv(pi, 2):
         newton_start_point += 1 / 2
         try:
             found_root = findroot(bounce_end_theta_check, newton_start_point)
         except:
-            found_root = 0
-    return found_root
+            found_root[0] = 0
+    return found_root[0]
+
+def check_final_bounce_angle(domain, q, inc_theta, inc_angle):
+    """ Returns the penalty and final polar angle after q bounces starting from 
+        inc_theta and inc_angle with 2pi subtracted. Helper function to 
+        generate_orbit_even.
+    """
+
+    final_theta = bounce_q_times_top_half(domain, q, inc_theta, inc_angle)
+
+    return (fsub(final_theta[0][0], fadd(inc_theta, pi)), final_theta[1])
 
 def generate_orbit_even(domain, q, start_theta):
-    """ Return an angle theta such that bounce is periodic of period q
+    """ Returns an angle theta such that bounce is periodic of period q
         on input theta, beginning at the marked point. Assumed that q is 
         even.
     """
@@ -108,23 +134,24 @@ def generate_orbit_even(domain, q, start_theta):
     if q == 2:
         return fdiv(pi, 2)
 
-    bounce_end = lambda bounce_angle: fsub(bounce_q_times(domain, q / 2, start_theta, bounce_angle)[0], fadd(start_theta, pi))
+    bounce_end = lambda bounce_angle: check_final_bounce_angle(domain, 
+        q / 2, start_theta, bounce_angle)
     newton_start_point = 0
-    found_root = 0
+    found_root = [0]
 
     # Make sure the root found isn't the point of incidence.
     # Use density of irrational rotations of the circle to pick another
     # starting point
-    while almosteq(found_root, start_theta) or abs(fsub(found_root, start_theta)) >= fdiv(pi, 2):
+    while almosteq(found_root[0], start_theta) or abs(fsub(found_root[0], start_theta)) >= fdiv(pi, 2):
         newton_start_point += 1 / 2
         try:
             found_root = findroot(bounce_end, newton_start_point)
         except:
-            found_root = 0
-    return found_root
+            found_root[0] = 0
+    return found_root[0]
 
 def generate_orbit(domain, q, start_theta):
-    """ Return an angle theta such that bounce is periodic of period q
+    """ Returns an angle theta such that bounce is periodic of period q
         on input theta, beginning at the marked point.
     """
 
