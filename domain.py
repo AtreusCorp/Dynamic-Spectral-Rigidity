@@ -1,7 +1,6 @@
 from mpmath import *
 
 #TODO specify precision
-mp.prec = 53                #[default: 53]
 mp.dps = 15                 #[default: 15]
 
 class Domain:
@@ -27,19 +26,16 @@ class Domain:
             import_fourier has been called. 
         """
 
-        #TODO Precision
-        series_terms = [fmul(self.fourier[n], cos(fmul(n, theta))) 
-                        for n in range(0, len(self.fourier))]
-        return fsum(series_terms)
+        return fourierval((self.fourier, [0]), [0, fmul(2, pi)], theta)
 
     def radius_derivative(self, theta):
         """ Computes the derivative of the radius function at a given angle. 
             Assumed that import_fourier has been called. 
         """
 
-        series_terms = [fprod([- n, self.fourier[n], sin(fmul(n, theta))]) 
+        series_terms = [fprod([- n, self.fourier[n]]) 
                         for n in range(0, len(self.fourier))]
-        return fsum(series_terms)
+        return fourierval(([0], series_terms), [0, fmul(2, pi)], theta)
 
     def polar(self, theta):
         """ Provides an interface for polar coordinates. 

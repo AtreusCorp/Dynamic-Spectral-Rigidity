@@ -8,17 +8,18 @@ def bounce(domain, inc_theta, inc_angle):
         billiard map without the cos of the angle. 
     """
 
-    inc_angle = fmod(inc_angle, pi)
-
+    inc_angle = fmod(inc_angle, pi) 
     incident_point = domain.polar(inc_theta)
+    incident_grad = domain.polar_gradient(inc_theta)
+
     path_vector_x = fadd(fmul(cos(inc_angle), 
-                         domain.polar_gradient(inc_theta)[0]),
+                         incident_grad[0]),
                          fneg(fmul(sin(inc_angle), 
-                         domain.polar_gradient(inc_theta)[1])))
+                         incident_grad[1])))
     path_vector_y = fadd(fmul(sin(inc_angle), 
-                         domain.polar_gradient(inc_theta)[0]),
+                         incident_grad[0]),
                          fmul(cos(inc_angle), 
-                         domain.polar_gradient(inc_theta)[1]))
+                         incident_grad[1]))
     path_vector = (path_vector_x, path_vector_y)
 
     difference_fnc = lambda theta, t: (fsub(fadd(incident_point[0], 
@@ -100,20 +101,20 @@ def generate_orbit_odd(domain, q, start_theta):
         odd.
     """
 
-    bounce_end_theta_check = lambda bounce_angle: check_q_bounce_angle(domain, (q - 1) / 2, start_theta, bounce_angle)
+    bounce_end = lambda bounce_angle: check_q_bounce_angle(domain, (q - 1) / 2, start_theta, bounce_angle)
     newton_start_point = 0
-    found_root = [0]
+    found_root = 0
 
     # Make sure the root found isn't the point of incidence.
     # Use density of irrational rotations of the circle to pick another
     # starting point
-    while almosteq(found_root[0], start_theta) or abs(fsub(found_root[0], start_theta)) >= fdiv(pi, 2):
+    while almosteq(found_root, start_theta) or abs(fsub(found_root, start_theta)) >= fdiv(pi, 2):
         newton_start_point += 1 / 2
         try:
-            found_root = findroot(bounce_end_theta_check, newton_start_point)
+            found_root = fmod(findroot(bounce_end, newton_start_point)[0], pi)
         except:
-            found_root[0] = 0
-    return found_root[0]
+            found_root = 0
+    return found_root
 
 def check_final_bounce_angle(domain, q, inc_theta, inc_angle):
     """ Returns the penalty and final polar angle after q bounces starting from 
@@ -137,18 +138,18 @@ def generate_orbit_even(domain, q, start_theta):
     bounce_end = lambda bounce_angle: check_final_bounce_angle(domain, 
         q / 2, start_theta, bounce_angle)
     newton_start_point = 0
-    found_root = [0]
+    found_root = 0
 
     # Make sure the root found isn't the point of incidence.
     # Use density of irrational rotations of the circle to pick another
     # starting point
-    while almosteq(found_root[0], start_theta) or abs(fsub(found_root[0], start_theta)) >= fdiv(pi, 2):
+    while almosteq(found_root, start_theta) or abs(fsub(found_root, start_theta)) >= fdiv(pi, 2):
         newton_start_point += 1 / 2
         try:
-            found_root = findroot(bounce_end, newton_start_point)
+            found_root = fmod(findroot(bounce_end, newton_start_point)[0], pi)
         except:
-            found_root[0] = 0
-    return found_root[0]
+            found_root = 0
+    return found_root
 
 def generate_orbit(domain, q, start_theta):
     """ Returns an angle theta such that bounce is periodic of period q
