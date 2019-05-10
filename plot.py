@@ -3,22 +3,30 @@ from billiards import *
 from matplotlib import pyplot as plt
 from matplotlib import animation
 
+
+fourer_path = input("Enter the absolute path to the Fourier coefficients file: ")
 circle = Domain()
-circle.import_fourier("/home/atreus/Documents/Dynamic Spectral Rigidity/circ")
+circle.import_fourier(fourer_path)
+
+orbit_length = int(input("Enter the period desired: "))
+
 bounce_theta = 0
-bounce_angle = generate_orbit(circle, 7, bounce_theta)
+#import pdb; pdb.set_trace()
+bounce_angle = generate_orbit(circle, orbit_length, 0)
+#bounce_angle = pi / 5
+
 
 fig = plt.figure()
 ax = fig.add_subplot(111, aspect='equal', autoscale_on=False,
-                     xlim=(-2, 2), ylim=(-2, 2))
+                     xlim=(-5, 5), ylim=(-5, 5))
 ax.set_xticks([])
 ax.set_yticks([])
 xdata, ydata = [], []
 ln, = plt.plot([], [], 'b.-', markersize=0.5)
 
 def init():
-    ax.set_xlim(-5, 5)
-    ax.set_ylim(-5, 5)
+    ax.set_xlim(-8, 8)
+    ax.set_ylim(-8, 8)
     theta = 0
     while theta < 2 * pi:
         xdata.append(circle.polar(theta)[0])
@@ -39,5 +47,5 @@ def update(frame):
     return ln,
 
 anim = animation.FuncAnimation(fig, update, init_func=init,
-                               frames=200, interval=300, blit=True)
+                               frames=200, interval=100, blit=True)
 plt.show()
