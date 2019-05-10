@@ -4,16 +4,12 @@ from matplotlib import pyplot as plt
 from matplotlib import animation
 
 
-fourer_path = input("Enter the absolute path to the Fourier coefficients file: ")
+fourer_path = input("Enter a path to a Fourier coefficient file: ")
 circle = Domain()
 circle.import_fourier(fourer_path)
-
 orbit_length = int(input("Enter the period desired: "))
-
 bounce_theta = 0
-#import pdb; pdb.set_trace()
 bounce_angle = generate_orbit(circle, orbit_length, 0)
-#bounce_angle = pi / 5
 
 
 fig = plt.figure()

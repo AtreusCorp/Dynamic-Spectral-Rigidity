@@ -28,8 +28,8 @@ def T(domain, function, precision):
 	"""
 
 	output = []
-
 	q = 0
+
 	while (q < precision):
 		output.append(l_q(domain, q, function))
 		
