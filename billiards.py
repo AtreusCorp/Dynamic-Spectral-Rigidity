@@ -160,3 +160,19 @@ def generate_orbit(domain, q, start_theta):
         return generate_orbit_even(domain, q, start_theta)
     else:
         return generate_orbit_odd(domain, q, start_theta)
+
+def compute_q_bounce_path(domain, q, start_theta):
+    """ Returns a list of bounce points for an orbit with period q.
+    """
+    
+    generated_start_bounce = generate_orbit(domain, q, start_theta)
+    cur_bounce = [start_theta, generated_start_bounce]
+    orbit = [(cur_bounce[0], cur_bounce[1])]
+    i = 0
+
+    while(i < q - 1):
+        cur_bounce = bounce(domain, cur_bounce[0], cur_bounce[1])
+        orbit.append((cur_bounce[0], cur_bounce[1]))
+        i += 1
+
+    return orbit
