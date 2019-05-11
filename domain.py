@@ -26,7 +26,7 @@ class Domain:
             import_fourier has been called. 
         """
 
-        return fourierval((self.fourier, [0]), [0, fmul(2, pi)], theta)
+        return fourierval((self.fourier, [0]), [0, 1], theta)
 
     def radius_derivative(self, theta):
         """ Computes the derivative of the radius function at a given angle. 
@@ -35,7 +35,7 @@ class Domain:
 
         series_terms = [fprod([- n, self.fourier[n]]) 
                         for n in range(0, len(self.fourier))]
-        return fourierval(([0], series_terms), [0, fmul(2, pi)], theta)
+        return fourierval(([0], series_terms), [0, 1], theta)
 
     def polar(self, theta):
         """ Provides an interface for polar coordinates. 
@@ -55,3 +55,11 @@ class Domain:
         grad_y = fadd(fmul(r_prime, sin(theta)), fmul(r, cos(theta)))
 
         return (grad_x, grad_y)
+
+def normalize_coords(x):
+    """ Returns the rescaled coordinates [0, 1] -> [0, 2 pi].
+    """
+
+    return fmul(x, fmul(2, pi))
+
+
