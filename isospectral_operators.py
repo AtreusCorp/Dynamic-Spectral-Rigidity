@@ -21,7 +21,7 @@ def l_q(domain, q, function):
     elif (q == 1):
         return function(0)
 
-    orbit = compute_q_bounce_path(domain, q, 0)
+    orbit = compute_q_bounce_path(domain, q)
     summands = [fmul(function(point[0]), sin(point[1])) for point in orbit]
     return fsum(summands)
 

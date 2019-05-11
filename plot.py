@@ -8,21 +8,22 @@ fourer_path = input("Enter a path to a Fourier coefficient file: ")
 circle = Domain()
 circle.import_fourier(fourer_path)
 orbit_length = int(input("Enter the period desired: "))
+#import pdb; pdb.set_trace()
 bounce_theta = 0
-bounce_angle = generate_orbit(circle, orbit_length, 0)
+bounce_angle = generate_orbit(circle, orbit_length)
 
 
 fig = plt.figure()
 ax = fig.add_subplot(111, aspect='equal', autoscale_on=False,
-                     xlim=(-5, 5), ylim=(-5, 5))
+                     xlim=(-1, 1), ylim=(-1, 1))
 ax.set_xticks([])
 ax.set_yticks([])
 xdata, ydata = [], []
 ln, = plt.plot([], [], 'b.-', markersize=0.5)
 
 def init():
-    ax.set_xlim(-8, 8)
-    ax.set_ylim(-8, 8)
+    ax.set_xlim(-1, 1)
+    ax.set_ylim(-1, 1)
     theta = 0
     while theta < 2 * pi:
         xdata.append(circle.polar(theta)[0])
