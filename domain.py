@@ -61,3 +61,10 @@ def normalize_coords(x):
     """
 
     return fmul(x, fmul(2, pi))
+
+def arc_length_coords(domain, x):
+    """ Returns the transformation taking x (in [0, 2 pi]) to the 
+        corresponding point in the parameterization by arc length.
+    """
+
+    return quad(lambda t: norm(domain.polar_gradient(t)), [0, x])
