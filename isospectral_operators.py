@@ -45,6 +45,7 @@ def T(domain, function, precision):
 
     while (q < precision):
         output.append(l_q(domain, q, function))
+        q += 1
     return output
 
 def T_lazutkin(domain, function, precision):
@@ -57,4 +58,5 @@ def T_lazutkin(domain, function, precision):
 
     while (q < precision):
         output.append(l_q_lazutkin(domain, q, function))
+        q += 1
     return output
