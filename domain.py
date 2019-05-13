@@ -61,5 +61,3 @@ def normalize_coords(x):
     """
 
     return fmul(x, fmul(2, pi))
-
-

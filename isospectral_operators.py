@@ -7,7 +7,6 @@ def l_q(domain, q, function):
         as defined in the Dynamic Spectral Rigidity paper (TODO: SAY THIS BETTER).
     """
     
-#    import pdb; pdb.set_trace()
     if (q == 0):
         integrand_nonscaled = lambda x: fprod([fdiv(function(x), 
                                                     domain.radius(x)), 
