@@ -25,15 +25,15 @@ def l_q(domain, q, function):
     return fsum(summands)
 
 def l_q_lazutkin(domain, q, function):
-	""" Returns the output of the linearized map modified by the Lazutkin 
-		weight.
-	"""
+    """ Returns the output of the linearized map modified by the Lazutkin 
+        weight.
+    """
 
-	arg_pre_scaled = lambda x: fmul(lazutkin_weight(domain, x), function(x))
-	scaled_function = lambda x: arg_pre_scaled(lazutkin_param(domain, 
-		arc_length_coords(domain, x)))
+    arg_pre_scaled = lambda x: fmul(lazutkin_weight(domain, x), function(x))
+    scaled_function = lambda x: arg_pre_scaled(lazutkin_param(domain, 
+        arc_length_coords(domain, x)))
 
-	return l_q(domain, q, scaled_function)
+    return l_q(domain, q, scaled_function)
 
 def T(domain, function, precision):
     """ Returns a list of length precision given by the linearized isospectral 
@@ -47,12 +47,12 @@ def T(domain, function, precision):
         output.append(l_q(domain, q, function))
     return output
 
-  def T_lazutkin(domain, function, precision):
-  	""" Returns a list of length precision given by the linearized isospectral 
+def T_lazutkin(domain, function, precision):
+    """ Returns a list of length precision given by the linearized isospectral 
         operator modified by the Lazutkin weight.
-  	"""
+    """
 
-  	output = []
+    output = []
     q = 0
 
     while (q < precision):
