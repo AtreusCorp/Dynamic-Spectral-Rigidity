@@ -19,17 +19,17 @@ ax = fig.add_subplot(111, aspect='equal', autoscale_on=False,
 ax.set_xticks([])
 ax.set_yticks([])
 xdata, ydata = [], []
-ln, = plt.plot([], [], 'b.-', markersize=0.5)
+ln, = plt.plot([], [], 'r.-', markersize=0.5)
 
 def init():
     ax.set_xlim(-1, 1)
     ax.set_ylim(-1, 1)
     theta = 0
-    while theta < 2 * pi:
+    while theta < 1:
         xdata.append(circle.polar(theta)[0])
         ydata.append(circle.polar(theta)[1])
         ln.set_data(xdata, ydata)
-        theta += 0.01
+        theta += 0.001
     ln.set_data(xdata, ydata)
     return ln,
 
