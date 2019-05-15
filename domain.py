@@ -1,7 +1,7 @@
 from mpmath import *
 
 #TODO specify precision
-mp.dps = 20                 #[default: 15]
+mp.dps = 15                 #[default: 15]
 
 class Domain:
     """ Assumed to be a Z_2 symmetric convex domain.
@@ -56,12 +56,6 @@ class Domain:
         grad_y = fadd(fmul(r_prime, sin(theta_rescaled)), fprod([r, 2, pi, cos(theta_rescaled)]))
 
         return (grad_x, grad_y)
-
-def normalize_coords(x):
-    """ Returns the rescaled coordinates [0, 1] -> [0, 2 pi].
-    """
-
-    return fmul(x, fmul(2, pi))
 
 def arc_length_coords(domain, x):
     """ Returns the transformation taking x (in [0, 2 pi]) to the 

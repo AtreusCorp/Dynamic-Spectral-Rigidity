@@ -8,10 +8,8 @@ def l_q(domain, q, function):
     """
     
     if (q == 0):
-        integrand_nonscaled = lambda x: fprod([fdiv(function(x), 
-                                                    domain.radius(x)), 
-                                               norm(domain.polar_gradient(x))])
-        integrand = lambda x: integrand_nonscaled(normalize_coords(x))
+        integrand = lambda x: fprod([fdiv(function(x), domain.radius(x)), 
+                                     norm(domain.polar_gradient(x))])
 
         # Here we make the assumption that the length of the boundary of
         # domain is 1
