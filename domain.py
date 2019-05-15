@@ -1,7 +1,7 @@
 from mpmath import *
 
 #TODO specify precision
-mp.dps = 15                 #[default: 15]
+mp.dps = 20                 #[default: 15]
 
 class Domain:
     """ Assumed to be a Z_2 symmetric convex domain.
@@ -33,7 +33,7 @@ class Domain:
             Assumed that import_fourier has been called. 
         """
 
-        series_terms = [fprod([- n, self.fourier[n]]) 
+        series_terms = [fprod([-n, fmul(2, pi), self.fourier[n]]) 
                         for n in range(0, len(self.fourier))]
         return fourierval(([0], series_terms), [0, 1], theta)
 
@@ -41,9 +41,9 @@ class Domain:
         """ Provides an interface for polar coordinates. 
             Assumed that import_fourier has been called.
         """
-
-        return (fmul(self.radius(theta), cos(theta)),  
-                fmul(self.radius(theta), sin(theta)))
+        theta_rescaled = fprod([theta, 2, pi])
+        return (fmul(self.radius(theta), cos(theta_rescaled)),  
+                fmul(self.radius(theta), sin(theta_rescaled)))
 
     def polar_gradient(self, theta):
         """ Returns the gradient of the polar map with respect to theta.
@@ -51,8 +51,9 @@ class Domain:
 
         r = self.radius(theta)
         r_prime = self.radius_derivative(theta)
-        grad_x = fsub(fmul(r_prime, cos(theta)), fmul(r, sin(theta)))
-        grad_y = fadd(fmul(r_prime, sin(theta)), fmul(r, cos(theta)))
+        theta_rescaled = fprod([theta, 2, pi])
+        grad_x = fsub(fmul(r_prime, cos(theta_rescaled)), fprod([r, 2, pi, sin(theta_rescaled)]))
+        grad_y = fadd(fmul(r_prime, sin(theta_rescaled)), fprod([r, 2, pi, cos(theta_rescaled)]))
 
         return (grad_x, grad_y)
 

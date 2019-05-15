@@ -28,20 +28,20 @@ def bounce(domain, inc_theta, inc_angle):
                                        fsub(fadd(incident_point[1], 
                                                  fmul(t, path_vector_y)),
                                             domain.polar(theta)[1]))
-    newton_start_point = [pi, 1]
+    newton_start_point = [1 / 2, 1]
     next_point = [0, 0]
 
     # Make sure the root found isn't the point of incidence.
     # Use density of irrational rotations of the circle to pick another
     # starting point
-    while almosteq(next_point[1], 0):
-        newton_start_point[0] += 1
+    while almosteq(next_point[1], 0) or almosteq(fmod(next_point[0], 1), inc_theta):
+        newton_start_point[0] += fdiv(pi, 8)
         try:
             next_point = findroot(difference_fnc, newton_start_point)
         except:
             next_point = [0, 0]
 
-    next_inc_theta = fmod(next_point[0], fmul(2, pi))
+    next_inc_theta = fmod(next_point[0], 1)
     next_point_t = next_point[1]
 
     path_vector_end = (fadd(incident_point[0], 
@@ -80,8 +80,8 @@ def bounce_q_times_top_half(domain, q, inc_angle):
         cur_pt = bounce(domain, cur_pt[0], cur_pt[1])
 
         # Incompatible bounce
-        if (pi < fabs(cur_pt[0])):
-            penalty = fadd(penalty, fsub(fabs(cur_pt[0]), pi))
+        if ((1 / 2) < fabs(cur_pt[0])):
+            penalty = fadd(penalty, fsub(fabs(cur_pt[0]), 1 / 2))
 
         i += 1
     return (cur_pt, penalty)
@@ -95,7 +95,7 @@ def check_q_bounce_down(domain, q, inc_angle):
     last_bounce = bounce_q_times_top_half(domain, q, inc_angle)    
     following_bounce = bounce(domain, last_bounce[0][0], last_bounce[0][1])
 
-    return (fsub(fadd(last_bounce[0][0], following_bounce[0]), fmul(2, pi)), 
+    return (fsub(fadd(last_bounce[0][0], following_bounce[0]), 1), 
                  last_bounce[1])
 
 
@@ -114,7 +114,7 @@ def generate_orbit_odd(domain, q):
     # Make sure the root found isn't the point of incidence.
     # Use density of irrational rotations of the circle to pick another
     # starting point
-    while almosteq(found_root, 0) or abs(fsub(found_root, 0)) >= fdiv(pi, 2):
+    while almosteq(found_root, 0) or abs(found_root) >= fdiv(pi, 2):
         newton_start_point += 1 / 2
         try:
             found_root = fmod(findroot(bounce_end, newton_start_point)[0], pi)
@@ -123,13 +123,13 @@ def generate_orbit_odd(domain, q):
     return found_root
 
 def check_q_bounce_opp(domain, q, inc_angle):
-    """ Returns the difference between the polar angle of the qth bounce and pi
+    """ Returns the difference between the polar angle of the qth bounce and 1 / 2
         along with the penalty incurred from bouncing below the top half of the
         domain. Helper function to generate_orbit_even.
     """
 
     final_theta = bounce_q_times_top_half(domain, q, inc_angle)
-    return (fsub(final_theta[0][0], pi), final_theta[1])
+    return (fsub(final_theta[0][0], 1 / 2), final_theta[1])
 
 def generate_orbit_even(domain, q):
     """ Returns an angle theta such that bounce is periodic of period q
