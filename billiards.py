@@ -1,6 +1,5 @@
 from mpmath import *
 from domain import Domain
-from math import isinf
 
 def bounce(domain, inc_theta, inc_angle):
     """ Returns the next point after an edge collision at inc_angle, the 
@@ -37,7 +36,7 @@ def bounce(domain, inc_theta, inc_angle):
     while almosteq(next_point[1], 0) or almosteq(fmod(next_point[0], 1), inc_theta):
         newton_start_point[0] += fdiv(pi, 8)
         try:
-            next_point = findroot(difference_fnc, newton_start_point, norm=lambda x: power(norm(x, p=2), 1 / 2))
+            next_point = findroot(difference_fnc, newton_start_point, norm=lambda x: power(norm(x, p=inf), 1 / 2))
         except:
             next_point = [0, 0]
 
