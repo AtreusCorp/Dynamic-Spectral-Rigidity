@@ -1,19 +1,25 @@
 from mpmath import *
 from domain import *
 
-def lazutkin_param(domain, s):
+def C(domain):
+    """ Returns the C coefficient for the Lazutkin paramterization.
+    """
+
+    integrand = lambda t: fmul(power(domain.radius(t), fdiv(-2, 3)), 
+                               norm(domain.polar_gradient(t)))
+    return power(quad(integrand, [0, 1]), -1)
+
+
+def lazutkin_param_non_arc(domain, s):
     """ Returns the Lazutkin parametrization for domain evaluated at s.
         Generally s is assumed to be the parameterization by arc length.
     """
 
-    integrand = lambda s_prime: power(domain.radius(s_prime), fdiv(-2, 3))
-    C = power(quad(integrand, [0, 1]), -1)
-    return fmul(C, quad(integrand, [0, s]))
+    integrand = lambda t: fmul(power(domain.radius(t), fdiv(-2, 3)), 
+                               norm(domain.polar_gradient(t)))
+    return fmul(C(domain), quad(integrand, [0, s]))
 
 def lazutkin_weight(domain, x):
     """ Returns the Lazutkin weight of domain at the point x.
     """
-
-    integrand = lambda s_prime: power(domain.radius(s_prime), fdiv(-2, 3))
-    C = power(quad(integrand, [0, 1]), -1)
-    return power(fprod([2, C, power(domain.radius(x), fdiv(1, 2))]) , -1)
+    return power(fprod([2, C(domain), power(domain.radius(x), fdiv(1, 3))]), -1)
