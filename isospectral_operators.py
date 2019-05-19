@@ -27,7 +27,7 @@ def l_q_lazutkin(domain, q, function):
         weight.
     """
 
-    arg_pre_scaled = lambda x: fmul(lazutkin_weight(domain, x), function(x))
+    arg_pre_scaled = lambda x: fdiv(function(x), lazutkin_weight(domain, x))
     scaled_function = lambda x: arg_pre_scaled(lazutkin_param_non_arc(domain, x))
 
     return l_q(domain, q, scaled_function)
@@ -52,7 +52,7 @@ def T_lazutkin(domain, function, precision):
 
     output = []
     q = 0
-    import pdb; pdb.set_trace()
+
     while (q < precision):
         output.append(l_q_lazutkin(domain, q, function))
         q += 1

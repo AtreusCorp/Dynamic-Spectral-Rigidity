@@ -3,16 +3,12 @@ from billiards import *
 from matplotlib import pyplot as plt
 from matplotlib import animation
 
-
 fourer_path = input("Enter a path to a Fourier coefficient file: ")
 circle = Domain()
 circle.import_fourier(fourer_path)
 orbit_length = int(input("Enter the period desired: "))
-#import pdb; pdb.set_trace()
 bounce_theta = 0
 bounce_angle = generate_orbit(circle, orbit_length)
-
-
 fig = plt.figure()
 ax = fig.add_subplot(111, aspect='equal', autoscale_on=False,
                      xlim=(-1, 1), ylim=(-1, 1))
