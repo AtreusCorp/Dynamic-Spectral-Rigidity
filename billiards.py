@@ -56,10 +56,7 @@ def bounce(domain, inc_theta, inc_angle, guess_theta = 1 / 2):
             or bounce_compare(domain, path_vector, incident_point, next_point[1])):
         try:
             next_point = findroot(difference_fnc, newton_start_point)
-<<<<<<< HEAD
             next_point[0] = fmod(next_point[0], 1)
-=======
->>>>>>> origin/lazutkin_bounce
         except:
             next_point = [0, 0]
         finally:
