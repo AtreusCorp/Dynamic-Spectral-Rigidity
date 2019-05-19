@@ -63,3 +63,10 @@ def arc_length_coords(domain, x):
     """
 
     return quad(lambda t: norm(domain.polar_gradient(t)), [0, x])
+
+def inv_arc_length_coords(domain, s):
+    """ Returns the inverse of the transformation taking x (in [0, 2 pi]) to the 
+        corresponding point in the parameterization by arc length.
+    """
+
+    return findroot(lambda x: arc_length_coords(domain, x) - s, 0.5)
