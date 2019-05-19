@@ -1,48 +1,67 @@
 from mpmath import *
 from domain import Domain
+from scipy.optimize import minimize_scalar
 
-def bounce(domain, inc_theta, inc_angle):
+def bounce_compare(domain, path_vector, incident_point, t_0):
+    """ A helper for bounce which checks the validity of a bounce point 
+        candidate. Return True if halving t_0 brings one closer to 
+        the domain.
+    """
+
+    polar_1 = lambda theta: domain.polar(theta)[0]
+    polar_2 = lambda theta: domain.polar(theta)[1]
+    path_vec_1 = lambda t: fadd(fmul(path_vector[0], t), 
+                                incident_point[0])
+    path_vec_2 = lambda t: fadd(fmul(path_vector[1], t), 
+                                incident_point[1])
+    G = lambda theta: fadd(power(fsub(polar_1(theta), path_vec_1(t_0)), 2),
+                           power(fsub(polar_2(theta), path_vec_2(t_0)), 2))
+    F = lambda theta: fadd(power(fsub(polar_1(theta), path_vec_1(fdiv(t_0, 2))), 2),
+                           power(fsub(polar_2(theta), path_vec_2(fdiv(t_0, 2))), 2))
+    return minimize_scalar(G).fun > minimize_scalar(F).fun
+
+def bounce(domain, inc_theta, inc_angle, guess_theta = 1 / 2):
     """ Returns the next point after an edge collision at inc_angle, the 
         angle of incidence inc_angle in domain. This is essentially the 
         billiard map without the cos of the angle. 
     """
 
-    inc_angle = fmod(inc_angle, pi) 
+    inc_angle = fmod(inc_angle, pi)
+    if (almosteq(inc_angle, 0)):
+        return (inc_theta, inc_angle)
+    
     incident_point = domain.polar(inc_theta)
     incident_grad = domain.polar_gradient(inc_theta)
-
-    path_vector_x = fadd(fmul(cos(inc_angle), 
-                         incident_grad[0]),
-                         fneg(fmul(sin(inc_angle), 
-                         incident_grad[1])))
-    path_vector_y = fadd(fmul(sin(inc_angle), 
-                         incident_grad[0]),
-                         fmul(cos(inc_angle), 
-                         incident_grad[1]))
+    path_vector_x = fadd(fmul(cos(inc_angle), incident_grad[0]),
+                         fneg(fmul(sin(inc_angle), incident_grad[1])))
+    path_vector_y = fadd(fmul(sin(inc_angle), incident_grad[0]),
+                         fmul(cos(inc_angle), incident_grad[1]))
     path_vector = (path_vector_x, path_vector_y)
-
     difference_fnc = lambda theta, t: (fsub(fadd(incident_point[0], 
                                                  fmul(t, path_vector_x)),
                                             domain.polar(theta)[0]),
                                        fsub(fadd(incident_point[1], 
                                                  fmul(t, path_vector_y)),
                                             domain.polar(theta)[1]))
-    newton_start_point = [1 / 2, 1]
+    newton_start_point = [guess_theta, 1]
     next_point = [0, 0]
 
     # Make sure the root found isn't the point of incidence.
     # Use density of irrational rotations of the circle to pick another
     # starting point
-    while almosteq(next_point[1], 0) or almosteq(fmod(next_point[0], 1), inc_theta):
-        newton_start_point[0] += fdiv(pi, 8)
+    while (almosteq(next_point[1], 0) 
+            or almosteq(fmod(next_point[0], 1), inc_theta)
+            or bounce_compare(domain, path_vector, incident_point, next_point[1])):
         try:
-            next_point = findroot(difference_fnc, newton_start_point, norm=lambda x: power(norm(x, p=inf), 1 / 2))
+            next_point = findroot(difference_fnc, newton_start_point)
+            next_point[0] = fmod(next_point[0], 1)
         except:
             next_point = [0, 0]
+        finally:
+            newton_start_point[0] += fdiv(pi, 8)
 
     next_inc_theta = fmod(next_point[0], 1)
     next_point_t = next_point[1]
-
     path_vector_end = (fadd(incident_point[0], 
                             fmul(next_point_t, path_vector_x)),
                        fadd(incident_point[1], 
