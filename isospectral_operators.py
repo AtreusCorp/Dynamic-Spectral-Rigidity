@@ -3,6 +3,13 @@ from domain import *
 from billiards import *
 from lazutkin_coordinates import *
 
+def fourier_basis(j):
+    """ Returns the function e_j(x) = cos (2 pi j x) corresponding to the 
+        fourier basis.
+    """
+
+    return lambda x: cos(fprod([2, pi, j, x]))
+
 def l_q(domain, q, function):
     """ Returns the result of evaluating the functional l_q. (TODO: SAY THIS BETTER).
     """
@@ -57,3 +64,46 @@ def T_lazutkin(domain, function, precision):
         output.append(l_q_lazutkin(domain, q, function))
         q += 1
     return output
+
+def T_lazutkin_matrix(domain, i, j):
+    """ Returns the ith element of T_lazutkin(e_j).
+    """
+
+    return l_q_lazutkin(domain, i, fourier_basis(j))
+
+def P_star(function):
+    """ Returns the function obtained by subtracting the integral from 0 to 1
+        of function from function.
+    """
+
+    integral = quad(function, [0, 1])
+    return lambda x: function(x) - integral
+
+def b_bullet(precision):
+    """ Compute the tuple (0, 0, 1/4, ... , 1 / q^2, ...) up to at least 
+        precision dimensions.
+    """
+
+    b = [0, 0]
+    q = 2
+
+    while (q < precision):
+        b.append(fdiv(1, power(q, 2)))
+        q += 1
+    return b
+
+def operator_norm(matrix, gamma, max_j, max_q):
+    """ Returns the gamma operator norm of matrix, summing up to max_j and
+        considering the sup up to max_q. Assumed that matrix is a function 
+        accepting two arguments i,j and not an array () for efficiency.
+    """
+
+    max_j_sum = -1
+    q = 0
+
+    while(q < max_q):
+        temp_j_sum = nsum(lambda j: fprod([power(q, gamma), power(j, -gamma),
+                                           matrix(q, j)]), [1, max_j])
+        max_j_sum = temp_j_sum if temp_j_sum > max_j_sum else max_j_sum
+        q += 1
+    return max_j_sum
