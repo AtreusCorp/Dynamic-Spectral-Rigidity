@@ -92,6 +92,24 @@ def b_bullet(precision):
         q += 1
     return b
 
+def ell_bullet(domain, function):
+    """ Returns the value of ell_bullet on function. TODO: Make sure the formula
+        is correct. 
+    """
+    integrand_summand_1 = lambda x: fmul(fdiv(-1, 4), power(domain.radius(x), 
+                                                            fdiv(-2, 3)))
+    integrand_summand_2 = lambda x: fprod([fdiv(1, 6), 
+        power(domain.radius(x), fdiv(1, 3)), domain.radius_second_derivative(x)])
+    integrand_summand_3 = lambda x: fprod([fdiv(-1, 9), 
+        power(domain.radius(x), fdiv(-2, 3)), 
+        power(domain.radius_derivative(x), 2)])
+    integrand_sum = lambda x: fsum([integrand_summand_1(x), 
+        integrand_summand_2(x),
+        integrand_summand_3(x)])
+    integrand = lambda x: fprod([integrand_sum(x), function(x), 
+                                 norm(domain.polar_gradient(x))])
+    return fmul(fdiv(1, fmul(6, C(domain))), quad(integrand, [0, 1]))
+
 def operator_norm(matrix, gamma, max_j, max_q):
     """ Returns the gamma operator norm of matrix, summing up to max_j and
         considering the sup up to max_q. Assumed that matrix is a function 
@@ -99,11 +117,11 @@ def operator_norm(matrix, gamma, max_j, max_q):
     """
 
     max_j_sum = -1
-    q = 0
+    q = 1
 
     while(q < max_q):
         temp_j_sum = nsum(lambda j: fprod([power(q, gamma), power(j, -gamma),
-                                           matrix(q, j)]), [1, max_j])
+                                           fabs(matrix(q, j))]), [1, max_j])
         max_j_sum = temp_j_sum if temp_j_sum > max_j_sum else max_j_sum
         q += 1
     return max_j_sum
