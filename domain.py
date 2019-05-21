@@ -9,6 +9,7 @@ class Domain:
     def __init__(self):
 
         self.fourier = []
+        self.orbits = {}
 
     def import_fourier(self, path):
         """ Parses a textfile located at path containing fourier coefficients 
@@ -36,6 +37,16 @@ class Domain:
         series_terms = [fprod([-n, fmul(2, pi), self.fourier[n]]) 
                         for n in range(0, len(self.fourier))]
         return fourierval(([0], series_terms), [0, 1], theta)
+
+    def radius_second_derivative(self, theta):
+        """ Computes the second derivative of the radius function at a given 
+            angle. Assumed that import_fourier has been called. 
+        """
+
+        series_terms = [fprod([-1, fpower(fprod([2, pi, n]), 2), 
+                               self.fourier[n]]) 
+                        for n in range(0, len(self.fourier))]
+        return fourierval((series_terms, [0]), [0, 1], theta)
 
     def polar(self, theta):
         """ Provides an interface for polar coordinates. 

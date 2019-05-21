@@ -196,10 +196,15 @@ def generate_orbit(domain, q):
         on input theta, beginning at the marked point.
     """
 
+    if (q in domain.orbits.keys()):
+        return domain.orbits[q]
+
     if (q % 2 == 0):
-        return generate_orbit_even(domain, q)
+        domain.orbits[q] = generate_orbit_even(domain, q)
+        return domain.orbits[q]
     else:
-        return generate_orbit_odd(domain, q)
+        domain.orbits[q] = generate_orbit_odd(domain, q)
+        return domain.orbits[q]
 
 def compute_q_bounce_path(domain, q):
     """ Returns a list of bounce points for an orbit with period q.
