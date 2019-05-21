@@ -43,7 +43,7 @@ class Domain:
             angle. Assumed that import_fourier has been called. 
         """
 
-        series_terms = [fprod([-1, fpower(fprod([2, pi, n]), 2), 
+        series_terms = [fprod([-1, power(fprod([2, pi, n]), 2), 
                                self.fourier[n]]) 
                         for n in range(0, len(self.fourier))]
         return fourierval((series_terms, [0]), [0, 1], theta)

@@ -117,19 +117,20 @@ def T_star_R(domain, function, precision):
     """
 
     T_val = T_lazutkin(domain, function, precision)
-
     l_0 = l_q_lazutkin(domain, 0, function)
     b_0 = T_lazutkin(domain, lambda x: 1, precision)
-    l_0_term = [fmul(b_term, l_0) for b_term in b_0]
 
-    l_bullet_val = l_bullet(domain, function)
+    # Attention: There is a small typo in the original paper in Lemma 5.3
+    # b_l l_0 should have a 1/2 coefficient which is reflected here
+
+    l_0_term = [fprod([0.5, b_term, l_0]) for b_term in b_0]
+    l_bullet_val = l_bullet(domain, P_star(function))
     b_bullet_val = b_bullet(precision)
-    l_bullet_term = [fmul(b_bullet_val, l_bullet_val) for b_term in b_bullet_val]
+    l_bullet_term = [fmul(b_term, l_bullet_val) for b_term in b_bullet_val]
 
-    sub_terms = [fadd(0_term, bullet_term) for 0_term, bullet_term 
+    sub_terms = [fadd(zero_term, bullet_term) for zero_term, bullet_term 
         in zip(l_0_term, l_bullet_term)]
-
-    return [fsub(t_term, sub_term) for t_term, sub_term in zip(T_val, sub_term)]
+    return [fsub(t_term, sub_term) for t_term, sub_term in zip(T_val, sub_terms)]
 
 def operator_norm(matrix, gamma, max_j, max_q):
     """ Returns the gamma operator norm of matrix, summing up to max_j and
