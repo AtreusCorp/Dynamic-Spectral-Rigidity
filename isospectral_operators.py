@@ -92,10 +92,11 @@ def b_bullet(precision):
         q += 1
     return b
 
-def ell_bullet(domain, function):
+def l_bullet(domain, function):
     """ Returns the value of ell_bullet on function. TODO: Make sure the formula
         is correct. 
     """
+
     integrand_summand_1 = lambda x: fmul(fdiv(-1, 4), power(domain.radius(x), 
                                                             fdiv(-2, 3)))
     integrand_summand_2 = lambda x: fprod([fdiv(1, 6), 
@@ -109,6 +110,26 @@ def ell_bullet(domain, function):
     integrand = lambda x: fprod([integrand_sum(x), function(x), 
                                  norm(domain.polar_gradient(x))])
     return fmul(fdiv(1, fmul(6, C(domain))), quad(integrand, [0, 1]))
+
+def T_star_R(domain, function, precision):
+    """ Returns a list of length precision given by a component of the 
+        linearized isospectral operator modified by the Lazutkin weight.
+    """
+
+    T_val = T_lazutkin(domain, function, precision)
+
+    l_0 = l_q_lazutkin(domain, 0, function)
+    b_0 = T_lazutkin(domain, lambda x: 1, precision)
+    l_0_term = [fmul(b_term, l_0) for b_term in b_0]
+
+    l_bullet_val = l_bullet(domain, function)
+    b_bullet_val = b_bullet(precision)
+    l_bullet_term = [fmul(b_bullet_val, l_bullet_val) for b_term in b_bullet_val]
+
+    sub_terms = [fadd(0_term, bullet_term) for 0_term, bullet_term 
+        in zip(l_0_term, l_bullet_term)]
+
+    return [fsub(t_term, sub_term) for t_term, sub_term in zip(T_val, sub_term)]
 
 def operator_norm(matrix, gamma, max_j, max_q):
     """ Returns the gamma operator norm of matrix, summing up to max_j and
