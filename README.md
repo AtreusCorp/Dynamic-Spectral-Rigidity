@@ -3,6 +3,7 @@ Code simulating billiard dynamics of arbitrary convex symmetric domains.
 Python dependencies:
  - matplotlib
  - mpmath
+ - SciPy
 
 Visualize the billiard dynamics of an arbitrary symmetric convex domain by first specifying its Fourier coefficients in a flat text file. The nth line should correspond to a floating point representation of the coefficient of the nth cosine term. Run plot.py in Python 3 and specify the path of the text file created previously along with period desired when prompted.
 
