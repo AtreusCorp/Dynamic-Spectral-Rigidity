@@ -63,10 +63,37 @@ class Domain:
         r = self.radius(theta)
         r_prime = self.radius_derivative(theta)
         theta_rescaled = fprod([theta, 2, pi])
-        grad_x = fsub(fmul(r_prime, cos(theta_rescaled)), fprod([r, 2, pi, sin(theta_rescaled)]))
-        grad_y = fadd(fmul(r_prime, sin(theta_rescaled)), fprod([r, 2, pi, cos(theta_rescaled)]))
-
+        grad_x = fsub(fmul(r_prime, cos(theta_rescaled)), 
+                      fprod([r, 2, pi, sin(theta_rescaled)]))
+        grad_y = fadd(fmul(r_prime, sin(theta_rescaled)), 
+                      fprod([r, 2, pi, cos(theta_rescaled)]))
         return (grad_x, grad_y)
+
+    def polar_gradient_norm_deriv(self, theta):
+        """ Returns the derivative of the norm of polar_gradient evaluated at 
+            the point theta.
+        """
+
+        gradient = self.polar_gradient(theta)
+        gradient_norm = norm(gradient)
+        radius = self.radius(theta)
+        radius_deriv = self.radius_derivative(theta)
+        radius_second_deriv = self.radius_derivative(theta)
+        theta_rescaled = fprod([theta, 2, pi])
+        two_pi = fmul(2, pi)
+        
+        coeff_1 = fsub(radius_second_deriv, fmul(power(two_pi, 2), radius))
+        coeff_2 = fprod([2, two_pi, radius_deriv])
+
+        grad_x_prime = fsub(fmul(coeff_1,cos(theta_rescaled)), 
+                            fmul(coeff_2, sin(theta_rescaled)))
+        grad_y_prime = fadd(fmul(coeff_2,cos(theta_rescaled)), 
+                            fmul(coeff_1, sin(theta_rescaled)))
+        norm_deriv = fdiv(fadd(fmul(gradient[0], grad_x_prime), 
+                               fmul(gradient[1], grad_y_prime)), 
+                          gradient_norm)
+        return norm_deriv
+
 
 def arc_length_coords(domain, x):
     """ Returns the transformation taking x (in [0, 2 pi]) to the 
