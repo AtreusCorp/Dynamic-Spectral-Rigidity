@@ -99,17 +99,33 @@ def l_bullet(domain, function):
 
     integrand_summand_1 = lambda x: fmul(fdiv(-1, 4), power(domain.radius(x), 
                                                             fdiv(-2, 3)))
+
+    # Computing the change of coordinates for the first derivatve
+    radius_derivative_lazut = lambda x: fdiv(domain.radius_derivative(x), 
+        lazutkin_param_non_arc_deriv(domain, lazutkin_param_non_arc(domain, x)))
+
+    # Computing the change of coordinates for the second derivative
+    radius_second_deriv_lazut_term_1 = lambda x: fdiv(domain.radius_second_derivative(x), 
+                                                      power(lazutkin_param_non_arc_deriv(domain, x), 2))
+    radius_second_deriv_lazut_term_2 = lambda x: fdiv(domain.radius_derivative(x), 
+        lazutkin_param_non_arc_second_deriv(domain, lazutkin_param_non_arc(domain, x)))
+
+    radius_second_derivative_lazutkin = lambda x: fsub(radius_second_deriv_lazut_term_1(x),
+                                                       radius_second_deriv_lazut_term_2(x))
     integrand_summand_2 = lambda x: fprod([fdiv(1, 6), 
-        power(domain.radius(x), fdiv(1, 3)), domain.radius_second_derivative(x)])
+                                           power(domain.radius(x), fdiv(1, 3)), 
+                                           radius_second_derivative_lazutkin(x)])
+
     integrand_summand_3 = lambda x: fprod([fdiv(-1, 9), 
         power(domain.radius(x), fdiv(-2, 3)), 
-        power(domain.radius_derivative(x), 2)])
+        power(radius_derivative_lazut(x), 2)])
     integrand_sum = lambda x: fsum([integrand_summand_1(x), 
         integrand_summand_2(x),
         integrand_summand_3(x)])
-    integrand = lambda x: fprod([integrand_sum(x), function(x), 
-                                 norm(domain.polar_gradient(x))])
-    return fmul(fdiv(1, fmul(6, C(domain))), quad(integrand, [0, 1]))
+    integrand = lambda x: fprod([integrand_sum(x), 
+                                 function(lazutkin_param_non_arc(domain, x)), 
+                                 lazutkin_param_non_arc_deriv(domain, x)])
+    return fmul(fdiv(1, fmul(6, C(domain))), quad(integrand, [power(10, -2 * mp.dps), 1]))
 
 def T_star_R(domain, function, precision):
     """ Returns a list of length precision given by a component of the 
