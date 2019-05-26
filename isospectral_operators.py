@@ -106,9 +106,11 @@ def l_bullet(domain, function):
 
     # Computing the change of coordinates for the second derivative
     radius_second_deriv_lazut_term_1 = lambda x: fdiv(domain.radius_second_derivative(x), 
-                                                      power(lazutkin_param_non_arc_deriv(domain, x), 2))
-    radius_second_deriv_lazut_term_2 = lambda x: fdiv(domain.radius_derivative(x), 
-        lazutkin_param_non_arc_second_deriv(domain, lazutkin_param_non_arc(domain, x)))
+        power(lazutkin_param_non_arc_deriv(domain, lazutkin_param_non_arc(domain, x)), 2))
+
+    radius_second_deriv_lazut_term_2 = lambda x: fmul(fdiv(domain.radius_derivative(x), 
+        power(lazutkin_param_non_arc_deriv(domain, lazutkin_param_non_arc(domain, x)), 2)),
+    lazutkin_param_non_arc_second_deriv(domain, lazutkin_param_non_arc(domain, x)))
 
     radius_second_derivative_lazutkin = lambda x: fsub(radius_second_deriv_lazut_term_1(x),
                                                        radius_second_deriv_lazut_term_2(x))
@@ -120,8 +122,8 @@ def l_bullet(domain, function):
         power(domain.radius(x), fdiv(-2, 3)), 
         power(radius_derivative_lazut(x), 2)])
     integrand_sum = lambda x: fsum([integrand_summand_1(x), 
-        integrand_summand_2(x),
-        integrand_summand_3(x)])
+                                    integrand_summand_2(x),
+                                    integrand_summand_3(x)])
     integrand = lambda x: fprod([integrand_sum(x), 
                                  function(lazutkin_param_non_arc(domain, x)), 
                                  lazutkin_param_non_arc_deriv(domain, x)])
@@ -140,10 +142,12 @@ def T_star_R(domain, function, precision):
     # b_l l_0 should have a 1/2 coefficient which is reflected here
 
     l_0_term = [fprod([0.5, b_term, l_0]) for b_term in b_0]
-    l_bullet_val = l_bullet(domain, P_star(function))
+
+    if not domain._l_bullet:
+        domain._l_bullet = l_bullet(domain, P_star(function))
+    l_bullet_val = domain._l_bullet
     b_bullet_val = b_bullet(precision)
     l_bullet_term = [fmul(b_term, l_bullet_val) for b_term in b_bullet_val]
-
     sub_terms = [fadd(zero_term, bullet_term) for zero_term, bullet_term 
         in zip(l_0_term, l_bullet_term)]
     return [fsub(t_term, sub_term) for t_term, sub_term in zip(T_val, sub_terms)]

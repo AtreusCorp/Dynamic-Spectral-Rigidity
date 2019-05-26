@@ -10,6 +10,7 @@ class Domain:
 
         self.fourier = []
         self.orbits = {}
+        self._l_bullet = None
 
     def import_fourier(self, path):
         """ Parses a textfile located at path containing fourier coefficients 
@@ -85,9 +86,9 @@ class Domain:
         coeff_1 = fsub(radius_second_deriv, fmul(power(two_pi, 2), radius))
         coeff_2 = fprod([2, two_pi, radius_deriv])
 
-        grad_x_prime = fsub(fmul(coeff_1,cos(theta_rescaled)), 
+        grad_x_prime = fsub(fmul(coeff_1, cos(theta_rescaled)), 
                             fmul(coeff_2, sin(theta_rescaled)))
-        grad_y_prime = fadd(fmul(coeff_2,cos(theta_rescaled)), 
+        grad_y_prime = fadd(fmul(coeff_2, cos(theta_rescaled)), 
                             fmul(coeff_1, sin(theta_rescaled)))
         norm_deriv = fdiv(fadd(fmul(gradient[0], grad_x_prime), 
                                fmul(gradient[1], grad_y_prime)), 
