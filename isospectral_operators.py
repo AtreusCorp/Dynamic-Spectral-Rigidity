@@ -172,7 +172,7 @@ def finite_h_star_gamma_norm(vector, gamma):
     norm_max = 0
 
     for i in range(len(vector)):
-        if (fmul(power(j, gamma), abs(vector[i])) > norm_max):
-            norm_max = fmul(power(j, gamma), abs(vector[i]))
+        if (fmul(power(i, gamma), abs(vector[i])) > norm_max):
+            norm_max = fmul(power(i, gamma), abs(vector[i]))
 
     return norm_max
