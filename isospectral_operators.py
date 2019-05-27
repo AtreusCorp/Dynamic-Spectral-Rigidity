@@ -142,10 +142,7 @@ def T_star_R(domain, function, precision):
     # b_l l_0 should have a 1/2 coefficient which is reflected here
 
     l_0_term = [fprod([0.5, b_term, l_0]) for b_term in b_0]
-
-    if not domain._l_bullet:
-        domain._l_bullet = l_bullet(domain, P_star(function))
-    l_bullet_val = domain._l_bullet
+    l_bullet_val = l_bullet(domain, P_star(function))
     b_bullet_val = b_bullet(precision)
     l_bullet_term = [fmul(b_term, l_bullet_val) for b_term in b_bullet_val]
     sub_terms = [fadd(zero_term, bullet_term) for zero_term, bullet_term 
@@ -167,3 +164,15 @@ def operator_norm(matrix, gamma, max_j, max_q):
         max_j_sum = temp_j_sum if temp_j_sum > max_j_sum else max_j_sum
         q += 1
     return max_j_sum
+
+def finite_h_star_gamma_norm(vector, gamma):
+    """ Returns the h_star_gamma norm of vector.
+    """
+
+    norm_max = 0
+
+    for i in range(len(vector)):
+        if (fmul(power(j, gamma), abs(vector[i])) > norm_max):
+            norm_max = fmul(power(j, gamma), abs(vector[i]))
+
+    return norm_max

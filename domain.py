@@ -10,7 +10,6 @@ class Domain:
 
         self.fourier = []
         self.orbits = {}
-        self._l_bullet = None
 
     def import_fourier(self, path):
         """ Parses a textfile located at path containing fourier coefficients 
