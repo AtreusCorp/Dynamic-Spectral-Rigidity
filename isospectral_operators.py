@@ -127,7 +127,7 @@ def l_bullet(domain, function):
     integrand = lambda x: fprod([integrand_sum(x), 
                                  function(lazutkin_param_non_arc(domain, x)), 
                                  lazutkin_param_non_arc_deriv(domain, x)])
-    return fmul(fdiv(1, fmul(6, C(domain))), quad(integrand, [power(10, -2 * mp.dps), 1]))
+    return fmul(fdiv(1, fmul(6, power(C(domain), 2))), quad(integrand, [power(10, -2 * mp.dps), 1]))
 
 def T_star_R(domain, function, precision):
     """ Returns a list of length precision given by a component of the 
