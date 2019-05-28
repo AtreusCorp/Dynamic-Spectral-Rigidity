@@ -3,13 +3,6 @@ from domain import *
 from billiards import *
 from lazutkin_coordinates import *
 
-def fourier_basis(j):
-    """ Returns the function e_j(x) = cos (2 pi j x) corresponding to the 
-        fourier basis.
-    """
-
-    return lambda x: cos(fprod([2, pi, j, x]))
-
 def l_q(domain, q, function):
     """ Returns the result of evaluating the functional l_q. (TODO: SAY THIS BETTER).
     """
@@ -64,12 +57,6 @@ def T_lazutkin(domain, function, precision):
         output.append(l_q_lazutkin(domain, q, function))
         q += 1
     return output
-
-def T_lazutkin_matrix(domain, i, j):
-    """ Returns the ith element of T_lazutkin(e_j).
-    """
-
-    return l_q_lazutkin(domain, i, fourier_basis(j))
 
 def P_star(function):
     """ Returns the function obtained by subtracting the integral from 0 to 1
@@ -148,31 +135,3 @@ def T_star_R(domain, function, precision):
     sub_terms = [fadd(zero_term, bullet_term) for zero_term, bullet_term 
         in zip(l_0_term, l_bullet_term)]
     return [fsub(t_term, sub_term) for t_term, sub_term in zip(T_val, sub_terms)]
-
-def operator_norm(matrix, gamma, max_j, max_q):
-    """ Returns the gamma operator norm of matrix, summing up to max_j and
-        considering the sup up to max_q. Assumed that matrix is a function 
-        accepting two arguments i,j and not an array () for efficiency.
-    """
-
-    max_j_sum = -1
-    q = 1
-
-    while(q < max_q):
-        temp_j_sum = nsum(lambda j: fprod([power(q, gamma), power(j, -gamma),
-                                           fabs(matrix(q, j))]), [1, max_j])
-        max_j_sum = temp_j_sum if temp_j_sum > max_j_sum else max_j_sum
-        q += 1
-    return max_j_sum
-
-def finite_h_star_gamma_norm(vector, gamma):
-    """ Returns the h_star_gamma norm of vector.
-    """
-
-    norm_max = 0
-
-    for i in range(len(vector)):
-        if (fmul(power(i, gamma), abs(vector[i])) > norm_max):
-            norm_max = fmul(power(i, gamma), abs(vector[i]))
-
-    return norm_max
