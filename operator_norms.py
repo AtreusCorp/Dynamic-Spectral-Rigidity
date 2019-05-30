@@ -31,12 +31,23 @@ def general_operator_norm(matrix, gamma, max_j, max_q):
         q += 1
     return max_j_sum
 
+def operator_diff_finite_sum(T_star_R_matrix, gamma, q, max_j):
+    """ Returns the sum of the qth row of the matrix of T_star_R up to the 
+        max_jth element, scaled according to the h_gamma norm.
+    """
+    id = lambda i, j: 1 if i == j else 0
+    sum_list = []
+    j = 1
+
+    for j in range(1, max_j):
+        sum_list.append(fprod([power(q, gamma), power(j, -gamma), 
+                               fabs(T_star_R_matrix[j][q] - id(q, j))]))
+    return sum_list
+
 def T_star_R_operator_diff_from_id(domain, gamma, max_j, max_q):
     """ Returns the gamma operator norm T_star_R - Id, summing up to max_j and
         considering the sup up to max_q.
     """
-
-    id = lambda i, j: 1 if i == j else 0
 
     # Keep a dummy element for index readability, indexed by column, row
     T_star_R_matrix = [0]
@@ -48,13 +59,9 @@ def T_star_R_operator_diff_from_id(domain, gamma, max_j, max_q):
 
     max_j_sum = -1
     q = 1
-    breakpoint()
-    while(q < max_q):
+    while (q < max_q):
         
-        #TODO Fix this!
-        sum_fnc = lambda j: fprod([power(q, gamma), power(j, -gamma), 
-                                   fabs(T_star_R_matrix[j][q] - id(q, j))])
-        temp_j_sum = nsum(sum_fnc, [1, max_j])
+        temp_j_sum = fsum(operator_diff_finite_sum(T_star_R_matrix, gamma, q, max_j))
         max_j_sum = temp_j_sum if temp_j_sum > max_j_sum else max_j_sum
         q += 1
     return max_j_sum

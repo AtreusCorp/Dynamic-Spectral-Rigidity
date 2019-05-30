@@ -96,7 +96,7 @@ class Domain:
 
 
 def arc_length_coords(domain, x):
-    """ Returns the transformation taking x (in [0, 2 pi]) to the 
+    """ Returns the transformation taking x (in [0, 1]) to the 
         corresponding point in the parameterization by arc length.
     """
 
