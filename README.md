@@ -18,3 +18,5 @@ billiards.py handles all things relevant to the billiard dynamics of a Domain, i
 isospectral_operators.py contains all the Isospectral operators specified in the paper as well as those modified by the Lazutkin weight.
 
 lazutkin_coordinates.py handles all computations relevant to the Lazutkin coordinates.
+
+operator_norms.py contains all functions relevant to norms of the isospectral (and general) linear operators. Any modification of norm computations can be made here and here alone.
