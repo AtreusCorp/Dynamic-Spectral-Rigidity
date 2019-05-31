@@ -1,4 +1,5 @@
 from isospectral_operators import *
+from operator_norms import *
 
 mp.dps = int(input("Enter mp.dps: "))
 domain = Domain()
