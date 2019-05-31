@@ -52,7 +52,6 @@ def T_star_R_operator_diff_from_id(domain, gamma, max_j, max_q):
     # Keep a dummy element for index readability, indexed by column, row
     T_star_R_matrix = [0]
     j = 1
-
     while (j < max_j):
         T_star_R_matrix.append(T_star_R(domain, fourier_basis(j), max_q))
         j += 1
