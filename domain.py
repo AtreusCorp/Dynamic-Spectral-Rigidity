@@ -3,6 +3,20 @@ from mpmath import *
 #TODO specify precision
 mp.dps = 15                 #[default: 15]
 
+def arc_length_coords(domain, x):
+    """ Returns the transformation taking x (in [0, 1]) to the 
+        corresponding point in the parameterization by arc length.
+    """
+
+    return quad(lambda t: norm(domain.polar_gradient(t)), [0, x])
+
+def inv_arc_length_coords(domain, s):
+    """ Returns the inverse of the transformation taking x (in [0, 2 pi]) to the 
+        corresponding point in the parameterization by arc length.
+    """
+
+    return findroot(lambda x: arc_length_coords(domain, x) - s, 0.5)
+
 class Domain:
     """ Assumed to be a Z_2 symmetric convex domain.
     """
@@ -20,6 +34,8 @@ class Domain:
 
         for line in file:
             self.fourier.append(mpf(line))
+        arc_length = arc_length_coords(self, 1)
+        self.fourier = [fdiv(coeff, arc_length) for coeff in self.fourier]
         return
 
     def radius(self, theta):
@@ -93,18 +109,3 @@ class Domain:
                                fmul(gradient[1], grad_y_prime)), 
                           gradient_norm)
         return norm_deriv
-
-
-def arc_length_coords(domain, x):
-    """ Returns the transformation taking x (in [0, 1]) to the 
-        corresponding point in the parameterization by arc length.
-    """
-
-    return quad(lambda t: norm(domain.polar_gradient(t)), [0, x])
-
-def inv_arc_length_coords(domain, s):
-    """ Returns the inverse of the transformation taking x (in [0, 2 pi]) to the 
-        corresponding point in the parameterization by arc length.
-    """
-
-    return findroot(lambda x: arc_length_coords(domain, x) - s, 0.5)
