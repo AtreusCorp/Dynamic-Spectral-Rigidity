@@ -35,7 +35,7 @@ def l_q_lazutkin(domain, q, function):
                                      lazutkin_param_non_arc_deriv(domain, x)])
         return quad(integrand, [0, 1])
 
-    return l_q(domain, q, fun_modified)
+    return fdiv(l_q(domain, q, fun_modified), q)
 
 def T(domain, function, precision):
     """ Returns a list of length precision given by the linearized isospectral 
