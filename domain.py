@@ -94,7 +94,7 @@ class Domain:
         gradient_norm = norm(gradient)
         radius = self.radius(theta)
         radius_deriv = self.radius_derivative(theta)
-        radius_second_deriv = self.radius_derivative(theta)
+        radius_second_deriv = self.radius_second_derivative(theta)
         theta_rescaled = fprod([theta, 2, pi])
         two_pi = fmul(2, pi)
         

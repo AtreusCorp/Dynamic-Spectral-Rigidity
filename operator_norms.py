@@ -15,7 +15,7 @@ def T_lazutkin_matrix(domain, i, j):
 
     return l_q_lazutkin(domain, i, fourier_basis(j))
 
-def general_operator_norm(matrix, gamma, max_j, max_q):
+def general_operator_gamma_norm(matrix, gamma, max_j, max_q):
     """ Returns the gamma operator norm of matrix, summing up to max_j and
         considering the sup up to max_q. Assumed that matrix is a function 
         accepting two arguments i,j and not an array () for efficiency.
@@ -26,6 +26,22 @@ def general_operator_norm(matrix, gamma, max_j, max_q):
 
     while(q < max_q):
         temp_j_sum = nsum(lambda j: fprod([power(q, gamma), power(j, -gamma),
+                                           fabs(matrix(q, j))]), [1, max_j])
+        max_j_sum = temp_j_sum if temp_j_sum > max_j_sum else max_j_sum
+        q += 1
+    return max_j_sum
+
+def general_operator_gamma_to_sup_norm(matrix, gamma, max_j, max_q):
+    """ Returns the gamma operator norm of matrix, summing up to max_j and
+        considering the sup up to max_q. Assumed that matrix is a function 
+        accepting two arguments i,j and not an array () for efficiency.
+    """
+
+    max_j_sum = -1
+    q = 1
+
+    while(q < max_q):
+        temp_j_sum = nsum(lambda j: fprod([power(j, -gamma),
                                            fabs(matrix(q, j))]), [1, max_j])
         max_j_sum = temp_j_sum if temp_j_sum > max_j_sum else max_j_sum
         q += 1
