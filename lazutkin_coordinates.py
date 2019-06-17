@@ -29,6 +29,7 @@ def lazutkin_param_non_arc_deriv(domain, s):
 def lazutkin_param_non_arc_second_deriv(domain, s):
     """ Returns the Lazutkin parametrization for domain evaluated at s.
     """
+    
     c = C(domain)
     radius = domain.radius(s)
 
