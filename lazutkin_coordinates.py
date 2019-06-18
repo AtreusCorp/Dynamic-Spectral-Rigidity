@@ -12,7 +12,6 @@ def C(domain):
 
 def lazutkin_param_non_arc(domain, s):
     """ Returns the Lazutkin parametrization for domain evaluated at s.
-        Generally s is assumed to be the parameterization by arc length.
     """
 
     integrand = lambda t: fmul(power(domain.radius(t), fdiv(-2, 3)),
@@ -21,7 +20,6 @@ def lazutkin_param_non_arc(domain, s):
 
 def lazutkin_param_non_arc_deriv(domain, s):
     """ Returns the Lazutkin parametrization for domain evaluated at s.
-        Generally s is assumed to be the parameterization by arc length.
     """
 
     fnc = lambda t: fmul(power(domain.radius(t), fdiv(-2, 3)),
@@ -30,8 +28,8 @@ def lazutkin_param_non_arc_deriv(domain, s):
 
 def lazutkin_param_non_arc_second_deriv(domain, s):
     """ Returns the Lazutkin parametrization for domain evaluated at s.
-        Generally s is assumed to be the parameterization by arc length.
     """
+    
     c = C(domain)
     radius = domain.radius(s)
 
