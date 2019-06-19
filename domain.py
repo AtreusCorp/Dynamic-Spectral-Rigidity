@@ -64,6 +64,16 @@ class Domain:
                         for n in range(0, len(self.fourier))]
         return fourierval((series_terms, [0]), [0, 1], theta)
 
+    def radius_third_derivative(self, theta):
+        """ Computes the second derivative of the radius function at a given
+            angle. Assumed that import_fourier has been called
+        """
+
+        series_terms = [fmul(power(fprod([2, pi, n]), 3), 
+                             self.fourier[n]) 
+                        for n in range(0, len(self.fourier))]
+        return fourierval(([0], series_terms), [0, 1], theta)
+
     def polar(self, theta):
         """ Provides an interface for polar coordinates. 
             Assumed that import_fourier has been called.
@@ -109,3 +119,78 @@ class Domain:
                                fmul(gradient[1], grad_y_prime)), 
                           gradient_norm)
         return norm_deriv
+
+    def radius_of_curv(self, theta):
+        """ Returns the radius of curvature at theta.
+        """
+
+        gradient = self.polar_gradient(theta)
+        radius = self.radius(theta)
+        radius_deriv = self.radius_derivative(theta)
+        radius_second_deriv = self.radius_second_derivative(theta)
+        theta_rescaled = fprod([theta, 2, pi])
+
+        coeff_1 = fsub(radius_second_deriv, fprod([4, power(pi, 2), radius]))
+        coeff_2 = fprod([4, pi, radius_deriv])
+
+        second_grad_x = fsub(fmul(coeff_1, cos(theta_rescaled)), 
+                             fmul(coeff_2, sin(theta_rescaled)))
+        second_grad_y = fadd(fmul(coeff_2, cos(theta_rescaled)), 
+                             fmul(coeff_1, sin(theta_rescaled)))
+        denom = fsub(fmul(gradient[0], second_grad_y), 
+                     fmul(gradient[1], second_grad_x))
+        return abs(fdiv(power(norm(gradient), 3), denom))
+
+    def radius_of_curv_deriv(self, theta):
+        """ Returns the derivative of the radius of curvature at theta.
+        """
+
+        gradient = self.polar_gradient(theta)
+        gradient_norm = norm(gradient)
+        radius = self.radius(theta)
+        radius_deriv = self.radius_derivative(theta)
+        radius_second_deriv = self.radius_second_derivative(theta)
+        radius_third_deriv = self.radius_third_derivative(theta)
+        theta_rescaled = fprod([theta, 2, pi])
+
+        coeff_1 = fsub(radius_second_deriv, fprod([4, power(pi, 2), radius]))
+        coeff_2 = fprod([4, pi, radius_deriv])
+
+        second_grad_x = fsub(fmul(coeff_1, cos(theta_rescaled)), 
+                             fmul(coeff_2, sin(theta_rescaled)))
+        second_grad_y = fadd(fmul(coeff_2, cos(theta_rescaled)), 
+                             fmul(coeff_1, sin(theta_rescaled)))
+        cross_product = fsub(fmul(gradient[0], second_grad_y), 
+                             fmul(gradient[1], second_grad_x))
+
+        coeff_1 = fsub(radius_third_deriv, fprod([12, power(pi, 2), 
+                                                  radius_deriv]))
+        coeff_2 = fmul(fmul(2, pi), fsub(fprod([4, power(pi, 2), radius]), 
+                                         fmul(3, radius_second_deriv)))
+
+        third_grad_x = fadd(fmul(coeff_1, cos(theta_rescaled)), 
+                            fmul(coeff_2, sin(theta_rescaled)))
+        third_grad_y = fsub(fmul(coeff_2, cos(theta_rescaled)), 
+                            fmul(coeff_1, sin(theta_rescaled)))
+
+        numerator_term_1 = fprod([3, gradient_norm, 
+                                  fadd(fmul(gradient[0], second_grad_x), 
+                                       fmul(gradient[1], second_grad_y))])
+        numerator_term_1 = fdiv(numerator_term_1, cross_product)
+
+        numerator_term_2 = fprod([power(gradient_norm, 3), 
+                                  fsub(fmul(gradient[0], third_grad_y), 
+                                       fmul(gradient[1], third_grad_x))])
+        numerator_term_2 = fdiv(numerator_term_2, power(cross_product, 3))
+
+        numerator = fmul(power(gradient_norm, 3), 
+                         fadd(numerator_term_1, numerator_term_2))
+        denom = fmul(cross_product, abs(fdiv(power(gradient_norm, 3), 
+                                             cross_product)))
+        return fdiv(numerator, denom)
+
+    def radius_of_curv_second_deriv(self, theta):
+        """ Returns the second derivative of the radius of curvature at theta.
+        """
+
+        return diff(lambda t: self.radius_of_curv_deriv(t), theta)
