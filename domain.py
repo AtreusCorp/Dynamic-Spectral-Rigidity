@@ -170,8 +170,8 @@ class Domain:
 
         third_grad_x = fadd(fmul(coeff_1, cos(theta_rescaled)), 
                             fmul(coeff_2, sin(theta_rescaled)))
-        third_grad_y = fsub(fmul(coeff_2, cos(theta_rescaled)), 
-                            fmul(coeff_1, sin(theta_rescaled)))
+        third_grad_y = fsub(fmul(coeff_1, sin(theta_rescaled)),
+                            fmul(coeff_2, cos(theta_rescaled)))
 
         numerator_term_1 = fprod([3, gradient_norm, 
                                   fadd(fmul(gradient[0], second_grad_x), 
@@ -181,7 +181,7 @@ class Domain:
         numerator_term_2 = fprod([power(gradient_norm, 3), 
                                   fsub(fmul(gradient[0], third_grad_y), 
                                        fmul(gradient[1], third_grad_x))])
-        numerator_term_2 = fdiv(numerator_term_2, power(cross_product, 3))
+        numerator_term_2 = fdiv(numerator_term_2, power(cross_product, 2))
 
         numerator = fmul(power(gradient_norm, 3), 
                          fadd(numerator_term_1, numerator_term_2))

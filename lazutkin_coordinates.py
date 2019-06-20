@@ -22,23 +22,23 @@ def lazutkin_param_non_arc_deriv(domain, s):
     """ Returns the Lazutkin parametrization for domain evaluated at s.
     """
 
-    fnc = lambda t: fmul(power(domain.radius_of_curv(t), fdiv(-2, 3)), 
-                         norm(domain.polar_gradient(t)))
-    return fmul(C(domain), fnc(s))
+    result = fmul(power(domain.radius_of_curv(t), fdiv(-2, 3)), 
+                  norm(domain.polar_gradient(t)))
+    return fmul(C(domain), result)
 
 def lazutkin_param_non_arc_second_deriv(domain, s):
     """ Returns the Lazutkin parametrization for domain evaluated at s.
     """
     
-    c = C(domain)
     radius_of_curv = domain.radius_of_curv(s)
+    radius_of_curv_deriv = domain.radius_of_curv_deriv(t)
+    polar_gradient = domain.polar_gradient(t)
+    polar_gradient_norm_deriv = domain.polar_gradient_norm_deriv(t)
 
-    fnc = lambda t: fadd(fprod([fdiv(-2, 3), 
-                                power(radius_of_curv, fdiv(-5, 3)), 
-                                domain.radius_of_curv_deriv(t), 
-                                norm(domain.polar_gradient(t))]),
-                         fmul(domain.polar_gradient_norm_deriv(t), 
-                              power(radius_of_curv, fdiv(-2, 3))))
+    result = fadd(fprod([fdiv(-2, 3), power(radius_of_curv, fdiv(-5, 3)), 
+                         radius_of_curv_deriv, norm(polar_gradient)]),
+                  fmul(polar_gradient_norm_deriv, 
+                       power(radius_of_curv, fdiv(-2, 3))))
     return fmul(C(domain), fnc(s))
 
 def lazutkin_weight(domain, x):
