@@ -61,7 +61,7 @@ class Domain:
 
         series_terms = [fprod([-1, power(fprod([2, pi, n]), 2), 
                                self.fourier[n]]) 
-                        for n in range(0, len(self.fourier))]
+                        for n in range(len(self.fourier))]
         return fourierval((series_terms, [0]), [0, 1], theta)
 
     def radius_third_derivative(self, theta):
@@ -71,7 +71,7 @@ class Domain:
 
         series_terms = [fmul(power(fprod([2, pi, n]), 3), 
                              self.fourier[n]) 
-                        for n in range(0, len(self.fourier))]
+                        for n in range(len(self.fourier))]
         return fourierval(([0], series_terms), [0, 1], theta)
 
     def polar(self, theta):
@@ -183,10 +183,8 @@ class Domain:
                                        fmul(gradient[1], third_grad_x))])
         numerator_term_2 = fdiv(numerator_term_2, power(cross_product, 2))
 
-        numerator = fmul(power(gradient_norm, 3), 
-                         fadd(numerator_term_1, numerator_term_2))
-        denom = fmul(cross_product, abs(fdiv(power(gradient_norm, 3), 
-                                             cross_product)))
+        numerator = fsub(numerator_term_1, numerator_term_2)
+        denom = fdiv(cross_product, abs(cross_product))
         return fdiv(numerator, denom)
 
     def radius_of_curv_second_deriv(self, theta):

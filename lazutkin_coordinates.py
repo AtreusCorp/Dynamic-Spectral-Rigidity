@@ -10,27 +10,27 @@ def C(domain):
     return power(quad(integrand, [0, 1]), -1)
 
 
-def lazutkin_param_non_arc(domain, s):
-    """ Returns the Lazutkin parametrization for domain evaluated at s.
+def lazutkin_param_non_arc(domain, t):
+    """ Returns the Lazutkin parametrization for domain evaluated at t.
     """
 
-    integrand = lambda t: fmul(power(domain.radius_of_curv(t), fdiv(-2, 3)), 
-                               norm(domain.polar_gradient(t)))
-    return fmul(C(domain), quad(integrand, [0, s]))
+    integrand = lambda s: fmul(power(domain.radius_of_curv(s), fdiv(-2, 3)), 
+                               norm(domain.polar_gradient(s)))
+    return fmul(C(domain), quad(integrand, [0, t]))
 
-def lazutkin_param_non_arc_deriv(domain, s):
-    """ Returns the Lazutkin parametrization for domain evaluated at s.
+def lazutkin_param_non_arc_deriv(domain, t):
+    """ Returns the Lazutkin parametrization for domain evaluated at t.
     """
 
     result = fmul(power(domain.radius_of_curv(t), fdiv(-2, 3)), 
                   norm(domain.polar_gradient(t)))
     return fmul(C(domain), result)
 
-def lazutkin_param_non_arc_second_deriv(domain, s):
-    """ Returns the Lazutkin parametrization for domain evaluated at s.
+def lazutkin_param_non_arc_second_deriv(domain, t):
+    """ Returns the Lazutkin parametrization for domain evaluated at t.
     """
     
-    radius_of_curv = domain.radius_of_curv(s)
+    radius_of_curv = domain.radius_of_curv(t)
     radius_of_curv_deriv = domain.radius_of_curv_deriv(t)
     polar_gradient = domain.polar_gradient(t)
     polar_gradient_norm_deriv = domain.polar_gradient_norm_deriv(t)
@@ -39,7 +39,7 @@ def lazutkin_param_non_arc_second_deriv(domain, s):
                          radius_of_curv_deriv, norm(polar_gradient)]),
                   fmul(polar_gradient_norm_deriv, 
                        power(radius_of_curv, fdiv(-2, 3))))
-    return fmul(C(domain), fnc(s))
+    return fmul(C(domain), result)
 
 def lazutkin_weight(domain, x):
     """ Returns the Lazutkin weight of domain at the point x.
