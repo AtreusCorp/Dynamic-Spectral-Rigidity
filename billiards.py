@@ -1,7 +1,6 @@
 from mpmath import *
 from domain import Domain
 from lazutkin_coordinates import *
-from scipy import optimize
 from scipy.optimize import minimize_scalar
 
 def bounce_compare(domain, path_vector, incident_point, t_0):
@@ -55,7 +54,8 @@ def bounce(domain, inc_theta, inc_angle, guess_theta = 1 / 2):
             or almosteq(fmod(next_point[0], 1), inc_theta)
             or bounce_compare(domain, path_vector, incident_point, next_point[1])):
         try:
-            next_point = findroot(difference_fnc, newton_start_point)
+            next_point = findroot(difference_fnc, newton_start_point, 
+                                  tol = power(10, -2 * mp.dps))
             next_point[0] = fmod(next_point[0], 1)
         except:
             next_point = [0, 0]
@@ -123,17 +123,9 @@ def generate_orbit_odd(domain, q):
         odd.
     """
 
-    # Find a good first guess
-    first_bounce = lambda bounce_angle: lazutkin_param_non_arc(domain, 
-        bounce(domain, 0, bounce_angle)[0]) - fdiv(1, q)
     bounce_end = lambda bounce_angle: check_q_bounce_down(domain, (q - 1) / 2, 
                                                           bounce_angle)
-    first_bounce_root = optimize.root_scalar(first_bounce, bracket=[0, fdiv(pi, 2)])
-
-    if (first_bounce_root.converged):
-        newton_start_point = first_bounce_root.root
-    else:
-        newton_start_point = fdiv(pi, 4)
+    newton_start_point = lazutkin_weight(domain, 0) / q
     found_root = 0
 
     # Make sure the root found isn't the point of incidence.
@@ -141,7 +133,8 @@ def generate_orbit_odd(domain, q):
     # starting point
     while almosteq(found_root, 0) or abs(found_root) >= fdiv(pi, 2):
         try:
-            found_root = fmod(findroot(bounce_end, newton_start_point)[0], pi)
+            found_root = fmod(findroot(bounce_end, newton_start_point, 
+                                       tol = power(10, -2 * mp.dps))[0], pi)
         except:
             found_root = 0
         finally:
@@ -166,16 +159,10 @@ def generate_orbit_even(domain, q):
 
     if q == 2:
         return fdiv(pi, 2)
-    first_bounce = lambda bounce_angle: lazutkin_param_non_arc(domain, 
-        bounce(domain, 0, bounce_angle)[0]) - fdiv(1, q)
+
     bounce_end = lambda bounce_angle: check_q_bounce_opp(domain, q / 2, 
                                                          bounce_angle)
-    first_bounce_root = optimize.root_scalar(first_bounce, bracket=[0, fdiv(pi, 2)])
-
-    if (first_bounce_root.converged):
-        newton_start_point = first_bounce_root.root
-    else:
-        newton_start_point = fdiv(pi, 4)
+    newton_start_point = lazutkin_weight(domain, 0) / q
     found_root = 0
 
     # Make sure the root found isn't the point of incidence.
@@ -183,7 +170,8 @@ def generate_orbit_even(domain, q):
     # starting point
     while almosteq(found_root, 0) or abs(found_root) >= fdiv(pi, 2):
         try:
-            found_root = fmod(findroot(bounce_end, newton_start_point)[0], pi)
+            found_root = fmod(findroot(bounce_end, newton_start_point,
+                                       tol = power(10, -2 * mp.dps))[0], pi)
         except:
             found_root = 0
         finally:
