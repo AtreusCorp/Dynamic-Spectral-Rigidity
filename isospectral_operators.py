@@ -27,15 +27,15 @@ def l_q_lazutkin(domain, q, function):
         weight.
     """
 
-    fun_modified = lambda x: fdiv(function(lazutkin_param_non_arc(domain, x)), 
+    fun_modified = lambda x: fdiv(function(x), 
                                   lazutkin_weight(domain, x))
 
     if (q == 0):
-        integrand = lambda x: fprod([2, function(lazutkin_param_non_arc(domain, x)), 
+        integrand = lambda x: fprod([2, function(x), 
                                      lazutkin_param_non_arc_deriv(domain, x)])
         return quad(integrand, [0, 1])
 
-    return fdiv(l_q(domain, q, fun_modified), q)
+    return l_q(domain, q, fun_modified)
 
 def T(domain, function, precision):
     """ Returns a list of length precision given by the linearized isospectral 
@@ -67,7 +67,7 @@ def P_star(domain, function):
     """ Returns the function obtained by subtracting the integral from 0 to 1
         of function from function.
     """
-    integrand = lambda x: fmul(function(lazutkin_param_non_arc(domain, x)), 
+    integrand = lambda x: fmul(function(x), 
                                 lazutkin_param_non_arc_deriv(domain, x))
     integral = quad(integrand, [0, 1])
     return lambda x: function(x) - integral
@@ -126,7 +126,7 @@ def T_star_R(domain, function, precision):
     """ Returns a list of length precision given by a component of the 
         linearized isospectral operator modified by the Lazutkin weight.
     """
-    breakpoint()
+    
     T_val = T_lazutkin(domain, function, precision)
     l_0 = T_val[0]
     b_0 = T_lazutkin(domain, lambda x: 1, precision)

@@ -191,4 +191,5 @@ class Domain:
         """ Returns the second derivative of the radius of curvature at theta.
         """
 
-        return diff(lambda t: self.radius_of_curv_deriv(t), theta)
+        return diff(lambda t: self.radius_of_curv_deriv(t), theta, 
+                    tol=power(10, -2 * mp.dps))
