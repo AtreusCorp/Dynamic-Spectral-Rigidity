@@ -27,12 +27,11 @@ def l_q_lazutkin(domain, q, function):
         weight.
     """
 
-    fun_modified = lambda x: fdiv(function(x), 
-                                  lazutkin_weight(domain, x))
+    fun_modified = lambda t: fdiv(function(lazutkin_param_non_arc(domain, t)), 
+                                  lazutkin_weight(domain, t))
 
     if (q == 0):
-        integrand = lambda x: fprod([2, function(x), 
-                                     lazutkin_param_non_arc_deriv(domain, x)])
+        integrand = lambda t: fmul(2, function(t))
         return quad(integrand, [0, 1])
 
     return l_q(domain, q, fun_modified)
@@ -68,9 +67,7 @@ def P_star(domain, function):
         of function from function.
     """
 
-    integrand = lambda x: fmul(function(x), 
-                               lazutkin_param_non_arc_deriv(domain, x))
-    integral = quad(integrand, [0, 1])
+    integral = quad(function, [0, 1])
     return lambda x: function(x) - integral
 
 def b_bullet(precision):
@@ -119,7 +116,7 @@ def l_bullet(domain, function):
                                     integrand_summand_2(t),
                                     integrand_summand_3(t)])
     integrand = lambda t: fprod([integrand_sum(t),
-                                 function(lazutkin_param_non_arc(domain, t)),
+                                 function(t),
                                  lazutkin_param_non_arc_deriv(domain, t)])
     return fmul(fdiv(1, fmul(6, power(C(domain), 2))), quad(integrand, [0, 1]))
 
