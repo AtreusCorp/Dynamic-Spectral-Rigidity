@@ -9,11 +9,11 @@ def fourier_basis(j):
 
     return lambda x: cos(fprod([2, pi, j, x]))
 
-def T_lazutkin_matrix(domain, i, j):
+def T_lazutkin_matrix(domain, q, j):
     """ Returns the ith element of T_lazutkin(e_j).
     """
 
-    return l_tilde_q(domain, i, fourier_basis(j))
+    return l_tilde_q(domain, q, fourier_basis(j))
 
 def general_operator_gamma_norm(matrix, gamma, max_j, max_q):
     """ Returns the gamma operator norm of matrix, summing up to max_j and
