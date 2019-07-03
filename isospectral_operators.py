@@ -22,7 +22,7 @@ def l_q(domain, q, function):
     summands = [fmul(function(point[0]), sin(point[1])) for point in orbit]
     return fsum(summands)
 
-def l_q_lazutkin(domain, q, function):
+def l_tilde_q_(domain, q, function):
     """ Returns the output of the linearized map modified by the Lazutkin
         weight.
     """
@@ -58,7 +58,7 @@ def T_lazutkin(domain, function, precision):
     q = 0
 
     while (q < precision):
-        output.append(l_q_lazutkin(domain, q, function))
+        output.append(l_tilde_q(domain, q, function))
         q += 1
     return output
 
