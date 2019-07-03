@@ -105,12 +105,12 @@ def l_bullet(domain, function):
 
     radius_second_derivative_lazutkin = lambda t: fsub(radius_second_deriv_lazut_term_1(t),
                                                        radius_second_deriv_lazut_term_2(t))
-    integrand_summand_2 = lambda t: fprod([fdiv(1, 6),
-                                           power(domain.radius_of_curv(t), fdiv(1, 3)),
+    integrand_summand_2 = lambda t: fprod([fdiv(1, 36),
+                                           power(domain.radius_of_curv(t), -1),
                                            radius_second_derivative_lazutkin(t)])
 
-    integrand_summand_3 = lambda t: fprod([fdiv(-1, 9),
-        power(domain.radius_of_curv(t), fdiv(-2, 3)),
+    integrand_summand_3 = lambda t: fprod([fdiv(-1, 27),
+        power(domain.radius_of_curv(t), -2),
         power(radius_derivative_lazut(t), 2)])
     integrand_sum = lambda t: fsum([integrand_summand_1(t),
                                     integrand_summand_2(t),
@@ -118,7 +118,7 @@ def l_bullet(domain, function):
     integrand = lambda t: fprod([integrand_sum(t),
                                  function(t),
                                  lazutkin_param_non_arc_deriv(domain, t)])
-    return fmul(fdiv(1, fmul(6, power(C(domain), 2))), quad(integrand, [0, 1]))
+    return  quad(integrand, [0, 1])
 
 def T_star_R(domain, function, precision):
     """ Returns a list of length precision given by a component of the
