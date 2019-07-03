@@ -4,16 +4,16 @@ from lazutkin_coordinates import *
 from scipy.optimize import minimize_scalar
 
 def bounce_compare(domain, path_vector, incident_point, t_0):
-    """ A helper for bounce which checks the validity of a bounce point 
-        candidate. Return True if halving t_0 brings one closer to 
+    """ A helper for bounce which checks the validity of a bounce point
+        candidate. Return True if halving t_0 brings one closer to
         the domain.
     """
 
     polar_1 = lambda theta: domain.polar(theta)[0]
     polar_2 = lambda theta: domain.polar(theta)[1]
-    path_vec_1 = lambda t: fadd(fmul(path_vector[0], t), 
+    path_vec_1 = lambda t: fadd(fmul(path_vector[0], t),
                                 incident_point[0])
-    path_vec_2 = lambda t: fadd(fmul(path_vector[1], t), 
+    path_vec_2 = lambda t: fadd(fmul(path_vector[1], t),
                                 incident_point[1])
     G = lambda theta: fadd(power(fsub(polar_1(theta), path_vec_1(t_0)), 2),
                            power(fsub(polar_2(theta), path_vec_2(t_0)), 2))
@@ -22,15 +22,15 @@ def bounce_compare(domain, path_vector, incident_point, t_0):
     return minimize_scalar(G).fun > minimize_scalar(F).fun
 
 def bounce(domain, inc_theta, inc_angle, guess_theta = 1 / 2):
-    """ Returns the next point after an edge collision at inc_angle, the 
-        angle of incidence inc_angle in domain. This is essentially the 
-        billiard map without the cos of the angle. 
+    """ Returns the next point after an edge collision at inc_angle, the
+        angle of incidence inc_angle in domain. This is essentially the
+        billiard map without the cos of the angle.
     """
 
     inc_angle = fmod(inc_angle, pi)
     if (almosteq(inc_angle, 0)):
         return (inc_theta, inc_angle)
-    
+
     incident_point = domain.polar(inc_theta)
     incident_grad = domain.polar_gradient(inc_theta)
     path_vector_x = fadd(fmul(cos(inc_angle), incident_grad[0]),
@@ -38,10 +38,10 @@ def bounce(domain, inc_theta, inc_angle, guess_theta = 1 / 2):
     path_vector_y = fadd(fmul(sin(inc_angle), incident_grad[0]),
                          fmul(cos(inc_angle), incident_grad[1]))
     path_vector = (path_vector_x, path_vector_y)
-    difference_fnc = lambda theta, t: (fsub(fadd(incident_point[0], 
+    difference_fnc = lambda theta, t: (fsub(fadd(incident_point[0],
                                                  fmul(t, path_vector_x)),
                                             domain.polar(theta)[0]),
-                                       fsub(fadd(incident_point[1], 
+                                       fsub(fadd(incident_point[1],
                                                  fmul(t, path_vector_y)),
                                             domain.polar(theta)[1]))
     newton_start_point = [guess_theta, 1]
@@ -50,11 +50,11 @@ def bounce(domain, inc_theta, inc_angle, guess_theta = 1 / 2):
     # Make sure the root found isn't the point of incidence.
     # Use density of irrational rotations of the circle to pick another
     # starting point
-    while (almosteq(next_point[1], 0) 
+    while (almosteq(next_point[1], 0)
             or almosteq(fmod(next_point[0], 1), inc_theta)
             or bounce_compare(domain, path_vector, incident_point, next_point[1])):
         try:
-            next_point = findroot(difference_fnc, newton_start_point, 
+            next_point = findroot(difference_fnc, newton_start_point,
                                   tol = power(10, -2 * mp.dps))
             next_point[0] = fmod(next_point[0], 1)
         except:
@@ -64,20 +64,20 @@ def bounce(domain, inc_theta, inc_angle, guess_theta = 1 / 2):
 
     next_inc_theta = fmod(next_point[0], 1)
     next_point_t = next_point[1]
-    path_vector_end = (fadd(incident_point[0], 
+    path_vector_end = (fadd(incident_point[0],
                             fmul(next_point_t, path_vector_x)),
-                       fadd(incident_point[1], 
+                       fadd(incident_point[1],
                             fmul(next_point_t, path_vector_y)))
     # Cosine law
-    next_point_inc_angle = acos(fdiv(fdot(path_vector, 
+    next_point_inc_angle = acos(fdiv(fdot(path_vector,
                                           domain.polar_gradient(next_inc_theta)),
-                                     fmul(norm(path_vector), 
+                                     fmul(norm(path_vector),
                                           norm(domain.polar_gradient(next_inc_theta)))))
     return (next_inc_theta, next_point_inc_angle)
 
 def bounce_q_times(domain, q, inc_angle):
     """ Return the value obtained by iteratively applying bounce q times,
-        beginning from angle 0. 
+        beginning from angle 0.
     """
 
     cur_pt = (0, inc_angle)
@@ -112,18 +112,18 @@ def check_q_bounce_down(domain, q, inc_angle):
         domain.
     """
 
-    last_bounce = bounce_q_times_top_half(domain, q, inc_angle)    
+    last_bounce = bounce_q_times_top_half(domain, q, inc_angle)
     following_bounce = bounce(domain, last_bounce[0][0], last_bounce[0][1])
-    return (fsub(fadd(last_bounce[0][0], following_bounce[0]), 1), 
+    return (fsub(fadd(last_bounce[0][0], following_bounce[0]), 1),
                  last_bounce[1])
 
 def generate_orbit_odd(domain, q):
     """ Returns an angle theta such that bounce is periodic of period q
-        on input theta, beginning at the marked point. Assumed that q is 
+        on input theta, beginning at the marked point. Assumed that q is
         odd.
     """
 
-    bounce_end = lambda bounce_angle: check_q_bounce_down(domain, (q - 1) / 2, 
+    bounce_end = lambda bounce_angle: check_q_bounce_down(domain, (q - 1) / 2,
                                                           bounce_angle)
     newton_start_point = lazutkin_weight(domain, 0) / q
     found_root = 0
@@ -133,7 +133,7 @@ def generate_orbit_odd(domain, q):
     # starting point
     while almosteq(found_root, 0) or abs(found_root) >= fdiv(pi, 2):
         try:
-            found_root = fmod(findroot(bounce_end, newton_start_point, 
+            found_root = fmod(findroot(bounce_end, newton_start_point,
                                        tol = power(10, -2 * mp.dps))[0], pi)
         except:
             found_root = 0
@@ -153,14 +153,14 @@ def check_q_bounce_opp(domain, q, inc_angle):
 
 def generate_orbit_even(domain, q):
     """ Returns an angle theta such that bounce is periodic of period q
-        on input theta, beginning at the marked point. Assumed that q is 
+        on input theta, beginning at the marked point. Assumed that q is
         even.
     """
 
     if q == 2:
         return fdiv(pi, 2)
 
-    bounce_end = lambda bounce_angle: check_q_bounce_opp(domain, q / 2, 
+    bounce_end = lambda bounce_angle: check_q_bounce_opp(domain, q / 2,
                                                          bounce_angle)
     newton_start_point = lazutkin_weight(domain, 0) / q
     found_root = 0
@@ -197,7 +197,7 @@ def generate_orbit(domain, q):
 def compute_q_bounce_path(domain, q):
     """ Returns a list of bounce points for an orbit with period q.
     """
-    
+
     generated_start_bounce = generate_orbit(domain, q)
     cur_bounce = [0, generated_start_bounce]
     orbit = [(cur_bounce[0], cur_bounce[1])]
