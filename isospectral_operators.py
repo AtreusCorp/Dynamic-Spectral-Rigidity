@@ -27,7 +27,7 @@ def l_q_lazutkin(domain, q, function):
         weight.
     """
 
-    fun_modified = lambda t: fdiv(function(lazutkin_param_non_arc(domain, t)), 
+    fun_modified = lambda t: fdiv(function(lazutkin_param_non_arc(domain, t)),
                                   lazutkin_weight(domain, t))
 
     if (q == 0):
@@ -124,7 +124,7 @@ def T_star_R(domain, function, precision):
     """ Returns a list of length precision given by a component of the
         linearized isospectral operator modified by the Lazutkin weight.
     """
-    
+
     T_val = T_lazutkin(domain, function, precision)
     l_0 = T_val[0]
     b_0 = T_lazutkin(domain, lambda x: 1, precision)
