@@ -26,13 +26,13 @@ def l_tilde_q_(domain, q, function):
     """ Returns the output of the linearized map modified by the Lazutkin
         weight.
     """
+    if (q == 0):
+        integrand = lambda t: fmul(2, function(t))
+        return quad(integrand, [0, 1])
 
     fun_modified = lambda t: fdiv(function(lazutkin_param_non_arc(domain, t)),
                                   lazutkin_weight(domain, t))
 
-    if (q == 0):
-        integrand = lambda t: fmul(2, function(t))
-        return quad(integrand, [0, 1])
 
     return l_q(domain, q, fun_modified)
 
