@@ -13,7 +13,7 @@ def T_lazutkin_matrix(domain, i, j):
     """ Returns the ith element of T_lazutkin(e_j).
     """
 
-    return l_q_lazutkin(domain, i, fourier_basis(j))
+    return l_q_tilde(domain, i, fourier_basis(j))
 
 def general_operator_gamma_norm(matrix, gamma, max_j, max_q):
     """ Returns the gamma operator norm of matrix, summing up to max_j and
