@@ -11,8 +11,6 @@ def l_q(domain, q, function):
         integrand = lambda x: fprod([fdiv(function(x), domain.radius_of_curv(x)),
                                      norm(domain.polar_gradient(x))])
 
-        # Here we make the assumption that the length of the boundary of
-        # domain is 1
         return quad(integrand, [0, 1])
 
     elif (q == 1):
