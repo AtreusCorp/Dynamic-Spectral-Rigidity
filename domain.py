@@ -1,7 +1,9 @@
 from mpmath import *
+from scipy.optimize import minimize_scalar
 
-#TODO specify precision
+# Specify precision
 mp.dps = 15                 #[default: 15]
+curvature_bound = 0.1
 
 def arc_length_coords(domain, x):
     """ Returns the transformation taking x (in [0, 1]) to the 
@@ -36,6 +38,15 @@ class Domain:
             self.fourier.append(mpf(line))
         arc_length = arc_length_coords(self, 1)
         self.fourier = [fdiv(coeff, arc_length) for coeff in self.fourier]
+        curvature_minimum = minimize_scalar(
+            lambda t: fdiv(1, self.radius_of_curv(t))).fun
+
+        if (curvature_minimum < curvature_bound):
+            self.fourier = []
+            raise Exception("The minimum curvature value should not be "
+                             + "less than {}. The minimum value was {}."
+                             .format(curvature_bound, curvature_minimum))
+
         return
 
     def radius(self, theta):
