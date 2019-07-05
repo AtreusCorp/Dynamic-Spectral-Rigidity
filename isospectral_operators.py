@@ -11,8 +11,6 @@ def l_q(domain, q, function):
         integrand = lambda x: fprod([fdiv(function(x), domain.radius_of_curv(x)),
                                      norm(domain.polar_gradient(x))])
 
-        # Here we make the assumption that the length of the boundary of
-        # domain is 1
         return quad(integrand, [0, 1])
 
     elif (q == 1):
@@ -88,23 +86,20 @@ def l_bullet(domain, function):
         is correct.
     """
 
-    integrand_summand_1 = lambda x: fmul(fdiv(-1, 4), power(domain.radius_of_curv(x),
-                                                            fdiv(-2, 3)))
+    integrand_summand_1 = lambda x: fmul(fdiv(-1, fmul(24, power(C(domain), 2))), 
+                                         power(domain.radius_of_curv(x), fdiv(-2, 3)))
 
     # Computing the change of coordinates for the first derivatve
-    radius_derivative_lazut = lambda t: fdiv(domain.radius_of_curv_deriv(t),
-        lazutkin_param_non_arc_deriv(domain, t))
+    radius_derivative_lazut = lambda t: fdiv(domain.radius_of_curv_deriv(t), 
+                                             lazutkin_param_non_arc_deriv(domain, t))
 
     # Computing the change of coordinates for the second derivative
-    radius_second_deriv_lazut_term_1 = lambda t: fdiv(domain.radius_of_curv_second_deriv(t),
+    radius_second_derivative_lazutkin_1 = lambda t: fsub(domain.radius_of_curv_second_deriv(t), 
+                                                         fmul(radius_derivative_lazut(t), 
+                                                              lazutkin_param_non_arc_second_deriv(domain, t)))
+    radius_second_derivative_lazutkin = lambda t: fdiv(radius_second_derivative_lazutkin_1(t), 
         power(lazutkin_param_non_arc_deriv(domain, t), 2))
 
-    radius_second_deriv_lazut_term_2 = lambda t: fmul(fdiv(domain.radius_of_curv_deriv(t),
-        power(lazutkin_param_non_arc_deriv(domain, t), 2)),
-    lazutkin_param_non_arc_second_deriv(domain, t))
-
-    radius_second_derivative_lazutkin = lambda t: fsub(radius_second_deriv_lazut_term_1(t),
-                                                       radius_second_deriv_lazut_term_2(t))
     integrand_summand_2 = lambda t: fprod([fdiv(1, 36),
                                            power(domain.radius_of_curv(t), -1),
                                            radius_second_derivative_lazutkin(t)])

@@ -133,8 +133,7 @@ def generate_orbit_odd(domain, q):
     # starting point
     while almosteq(found_root, 0) or abs(found_root) >= fdiv(pi, 2):
         try:
-            found_root = fmod(findroot(bounce_end, newton_start_point,
-                                       tol = power(10, -2 * mp.dps))[0], pi)
+            found_root = fmod(findroot(bounce_end, newton_start_point)[0], pi)
         except:
             found_root = 0
         finally:
@@ -170,8 +169,7 @@ def generate_orbit_even(domain, q):
     # starting point
     while almosteq(found_root, 0) or abs(found_root) >= fdiv(pi, 2):
         try:
-            found_root = fmod(findroot(bounce_end, newton_start_point,
-                                       tol = power(10, -2 * mp.dps))[0], pi)
+            found_root = fmod(findroot(bounce_end, newton_start_point)[0], pi)
         except:
             found_root = 0
         finally:
