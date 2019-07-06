@@ -20,17 +20,17 @@ def l_q(domain, q, function):
     summands = [fmul(function(point[0]), sin(point[1])) for point in orbit]
     return fsum(summands)
 
-def l_q_tilde(domain, q, function):
+def l_tilde_q_(domain, q, function):
     """ Returns the output of the linearized map modified by the Lazutkin
         weight.
     """
-
-    fun_modified = lambda t: fdiv(function(lazutkin_param_non_arc(domain, t)), 
-                                  lazutkin_weight(domain, t))
-
     if (q == 0):
         integrand = lambda t: fmul(2, function(t))
         return quad(integrand, [0, 1])
+
+    fun_modified = lambda t: fdiv(function(lazutkin_param_non_arc(domain, t)),
+                                  lazutkin_weight(domain, t))
+
 
     return l_q(domain, q, fun_modified)
 
@@ -56,7 +56,7 @@ def T_lazutkin(domain, function, precision):
     q = 0
 
     while (q < precision):
-        output.append(l_q_tilde(domain, q, function))
+        output.append(l_tilde_q(domain, q, function))
         q += 1
     return output
 
@@ -119,7 +119,7 @@ def T_star_R(domain, function, precision):
     """ Returns a list of length precision given by a component of the
         linearized isospectral operator modified by the Lazutkin weight.
     """
-    
+
     T_val = T_lazutkin(domain, function, precision)
     l_0 = T_val[0]
     b_0 = T_lazutkin(domain, lambda x: 1, precision)
