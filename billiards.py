@@ -267,5 +267,7 @@ def compute_q_bounce_path_euler(domain, q, epsilon):
                 partial = length_gradient(domain, i, cur_point)
                 grad_sup_norm = partial
 
-    second_half_pts = cur_point + [1 - point for point in reversed(cur_point[:-1])]
-    return second_half_pts
+    if (q % 2):
+        return cur_point + [1 - point for point in reversed(cur_point)]
+    else:
+        return cur_point + [1 - point for point in reversed(cur_point[:-1])]
