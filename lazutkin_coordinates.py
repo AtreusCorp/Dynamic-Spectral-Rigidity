@@ -23,6 +23,13 @@ def lazutkin_param_non_arc(domain, t):
                                norm(domain.polar_gradient(s)))
     return fmul(C(domain), quad(integrand, [0, t]))
 
+def inv_lazutkin_param_non_arc(domain, x):
+    """ Returns the inverse of the transformation taking x (in [0, 2 pi]) to the 
+        corresponding point in the parameterization by arc length.
+    """
+
+    return findroot(lambda t: lazutkin_param_non_arc(domain, t) - x, 0.5)
+
 def lazutkin_param_non_arc_deriv(domain, t):
     """Returns the derivative of the Lazutkin parameter for domain
     evaluated at t.

@@ -39,6 +39,8 @@ class Domain:
             self.fourier.append(mpf(line))
         arc_length = arc_length_coords(self, 1)
         self.fourier = [fdiv(coeff, arc_length) for coeff in self.fourier]
+        
+        #TODO FIX THIS!
         curvature_minimum = minimize_scalar(
             lambda t: fdiv(1, self.radius_of_curv(t))).fun
         curvature_maximum = fdiv(1, 
