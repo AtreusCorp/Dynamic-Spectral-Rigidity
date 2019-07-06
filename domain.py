@@ -3,7 +3,8 @@ from scipy.optimize import minimize_scalar
 
 # Specify precision
 mp.dps = 15                 #[default: 15]
-curvature_bound = 0.1
+curvature_lower_bound = 0.1
+curvature_upper_bound = 10000
 
 def arc_length_coords(domain, x):
     """ Returns the transformation taking x (in [0, 1]) to the 
@@ -40,13 +41,20 @@ class Domain:
         self.fourier = [fdiv(coeff, arc_length) for coeff in self.fourier]
         curvature_minimum = minimize_scalar(
             lambda t: fdiv(1, self.radius_of_curv(t))).fun
+        curvature_maximum = fdiv(1, 
+            minimize_scalar(lambda t: self.radius_of_curv(t)).fun)
 
-        if (curvature_minimum < curvature_bound):
+        if (curvature_minimum < curvature_lower_bound):
             self.fourier = []
             raise Exception("The minimum curvature value should not be "
                              + "less than {}. The minimum value was {}."
-                             .format(curvature_bound, curvature_minimum))
+                             .format(curvature_lower_bound, curvature_minimum))
 
+        elif (curvature_maximum > curvature_upper_bound):
+            self.fourier = []
+            raise Exception("The maximum curvature value should not be "
+                             + "larger than {}. The maximum value was {}."
+                             .format(curvature_upper_bound, curvature_maximum))
         return
 
     def radius(self, theta):
