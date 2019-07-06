@@ -241,6 +241,31 @@ def length_gradient(domain, i, s):
     return fmul(norm(domain.polar_gradient(s[i])), 
                 fsub(incident_angle, outgoing_angle))
 
+def cos_outgoing_angle(domain, i, s):
+    """ Returns cos of the outgoing angle at position i of the orbit s.
+    """
+
+    if (i >= len(s)):
+        raise Exception("i must be < len(s).\n")
+
+    if (i == len(s) - 1):
+
+        s = s.copy()
+
+        if (not almosteq(s[i], (1 / 2))):
+            s.append(1 - s[i])
+        else:
+            s.append(1 - s[i - 1])
+
+    point_grad = domain.polar_gradient(s[i])
+    point_i = domain.polar(s[i])
+    point_i_plus_1 = domain.polar(s[i + 1])
+    diff_vector_outgoing = (point_i_plus_1[0] - point_i[0],
+                            point_i_plus_1[1] - point_i[1])
+    outgoing_angle = fdiv(fdot(point_grad, diff_vector_outgoing), 
+                          fmul(norm(point_grad), norm(diff_vector_outgoing)))
+    return outgoing_angle
+
 def compute_q_bounce_path_euler(domain, q, epsilon):
     """ Returns a list of bounce points for an orbit with period q,
         uses the euler method to optimize the length function.
@@ -267,7 +292,11 @@ def compute_q_bounce_path_euler(domain, q, epsilon):
                 partial = length_gradient(domain, i, cur_point)
                 grad_sup_norm = partial
 
+    outgoing_angles = [acos(cos_outgoing_angle(domain, i, cur_point)) 
+        for i in range(len(cur_point))]
+    cur_point = list(zip(cur_point, outgoing_angles))
+
     if (q % 2):
-        return cur_point + [1 - point for point in reversed(cur_point)]
+        return cur_point + [(1 - point[0], point[1]) for point in reversed(cur_point[1:])]
     else:
-        return cur_point + [1 - point for point in reversed(cur_point[:-1])]
+        return cur_point + [(1 - point[0], point[1]) for point in reversed(cur_point[1:-1])]

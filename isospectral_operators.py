@@ -16,11 +16,11 @@ def l_q(domain, q, function):
     elif (q == 1):
         return function(0)
 
-    orbit = compute_q_bounce_path(domain, q)
+    orbit = compute_q_bounce_path_euler(domain, q, 0.01)
     summands = [fmul(function(point[0]), sin(point[1])) for point in orbit]
     return fsum(summands)
 
-def l_tilde_q_(domain, q, function):
+def l_tilde_q(domain, q, function):
     """ Returns the output of the linearized map modified by the Lazutkin
         weight.
     """
