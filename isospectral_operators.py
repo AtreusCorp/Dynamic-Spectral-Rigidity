@@ -31,7 +31,6 @@ def l_tilde_q(domain, q, function):
     fun_modified = lambda t: fdiv(function(lazutkin_param_non_arc(domain, t)),
                                   lazutkin_weight(domain, t))
 
-
     return l_q(domain, q, fun_modified)
 
 def T(domain, function, precision):
@@ -60,7 +59,7 @@ def T_lazutkin(domain, function, precision):
         q += 1
     return output
 
-def P_star(domain, function):
+def P_star(function):
     """ Returns the function obtained by subtracting the integral from 0 to 1
         of function from function.
     """
@@ -85,9 +84,9 @@ def l_bullet(domain, function):
     """ Returns the value of ell_bullet on function. TODO: Make sure the formula
         is correct.
     """
-
-    integrand_summand_1 = lambda x: fmul(fdiv(-1, fmul(24, power(C(domain), 2))), 
-                                         power(domain.radius_of_curv(x), fdiv(-2, 3)))
+    breakpoint()
+    integrand_summand_1 = lambda t: fmul(fdiv(-1, fmul(24, power(C(domain), 2))), 
+                                         power(domain.radius_of_curv(t), fdiv(-2, 3)))
 
     # Computing the change of coordinates for the first derivatve
     radius_derivative_lazut = lambda t: fdiv(domain.radius_of_curv_deriv(t), 
@@ -111,7 +110,7 @@ def l_bullet(domain, function):
                                     integrand_summand_2(t),
                                     integrand_summand_3(t)])
     integrand = lambda t: fprod([integrand_sum(t),
-                                 function(t),
+                                 function(lazutkin_param_non_arc(domain, t)),
                                  lazutkin_param_non_arc_deriv(domain, t)])
     return  quad(integrand, [0, 1])
 
