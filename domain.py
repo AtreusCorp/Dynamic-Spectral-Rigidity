@@ -42,9 +42,9 @@ class Domain:
         
         #TODO FIX THIS!
         curvature_minimum = minimize_scalar(
-            lambda t: fdiv(1, self.radius_of_curv(t))).fun
+            lambda t: fdiv(1, self.radius_of_curv(t)), bracket=(0, 1 / 2)).fun
         curvature_maximum = fdiv(1, 
-            minimize_scalar(lambda t: self.radius_of_curv(t)).fun)
+            minimize_scalar(lambda t: self.radius_of_curv(t), bracket=(0, 1 / 2)).fun)
 
         if (curvature_minimum < curvature_lower_bound):
             self.fourier = []
