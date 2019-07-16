@@ -273,7 +273,6 @@ def compute_q_bounce_path_euler(domain, q, epsilon):
     
     cur_point = [inv_lazutkin_param_non_arc(domain, fdiv(i, q)) 
                  for i in range(q // 2 + 1)]
-
     grad_sup_norm = -inf
 
     for i in range(len(cur_point)):
@@ -288,8 +287,9 @@ def compute_q_bounce_path_euler(domain, q, epsilon):
         for i in range(len(cur_point)):
             cur_point[i] = fadd(cur_point[i], 
                 fmul(epsilon, length_gradient(domain, i, cur_point)))
+            partial = length_gradient(domain, i, cur_point)
+
             if partial > grad_sup_norm:
-                partial = length_gradient(domain, i, cur_point)
                 grad_sup_norm = partial
 
     outgoing_angles = [acos(cos_outgoing_angle(domain, i, cur_point)) 
