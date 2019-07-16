@@ -1,10 +1,12 @@
 from mpmath import *
+from lazutkin_coordinates import *
 from scipy.optimize import minimize_scalar
 
 # Specify precision
 mp.dps = 15                 #[default: 15]
 curvature_lower_bound = 0.1
 curvature_upper_bound = 10000
+lazutkin_mesh = 0.05
 
 def arc_length_coords(domain, x):
     """ Returns the transformation taking x (in [0, 1]) to the 
@@ -14,8 +16,8 @@ def arc_length_coords(domain, x):
     return quad(lambda t: norm(domain.polar_gradient(t)), [0, x])
 
 def inv_arc_length_coords(domain, s):
-    """ Returns the inverse of the transformation taking x (in [0, 2 pi]) to the 
-        corresponding point in the parameterization by arc length.
+    """ Returns the inverse of the transformation taking x (in [0, 2 pi]) to 
+        the corresponding point in the parameterization by arc length.
     """
 
     return findroot(lambda x: arc_length_coords(domain, x) - s, 0.5)
@@ -26,10 +28,26 @@ class Domain:
     def __init__(self):
 
         self.fourier = []
+        self.lazutkin_cache = {}
         self.orbits = {}
 
+    def _cache_lazutkin(self):
+        """ Caches lazutkin values according to the lazutkin_mesh 
+            parameter into domain. Helper to import_fourier.
+        """
+
+        self.lazutkin_cache[0] = 0
+        cur_val = lazutkin_mesh
+
+        # TODO: Make this smarter
+        while (cur_val <= 1):
+            domain.lazutkin_cache[cur_val] = lazutkin_param_non_arc(domain, cur_val)
+            cur_val += lazutkin_mesh
+        return
+
+
     def import_fourier(self, path):
-        """ Parses a textfile located at path containing fourier coefficients 
+        """ Parses a text file located at path containing fourier coefficients 
             for the domain. Coefficients are expected one per line. 
         """
 
@@ -56,6 +74,7 @@ class Domain:
             raise Exception("The maximum curvature value should not be "
                              + "larger than {}. The maximum value was {}."
                              .format(curvature_upper_bound, curvature_maximum))
+        self._cache_lazutkin()
         return
 
     def radius(self, theta):
