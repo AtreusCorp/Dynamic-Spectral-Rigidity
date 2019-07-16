@@ -177,26 +177,15 @@ def generate_orbit_even(domain, q):
             newton_start_point = fmod(newton_start_point, fdiv(pi, 2))
     return found_root
 
-def generate_orbit(domain, q):
-    """ Returns an angle theta such that bounce is periodic of period q
-        on input theta, beginning at the marked point.
-    """
-
-    if (q in domain.orbits.keys()):
-        return domain.orbits[q]
-
-    if (q % 2 == 0):
-        domain.orbits[q] = generate_orbit_even(domain, q)
-        return domain.orbits[q]
-    else:
-        domain.orbits[q] = generate_orbit_odd(domain, q)
-        return domain.orbits[q]
-
 def compute_q_bounce_path(domain, q):
     """ Returns a list of bounce points for an orbit with period q.
     """
 
-    generated_start_bounce = generate_orbit(domain, q)
+    if (q % 2 == 0):
+        generated_start_bounce = generate_orbit_even(domain, q)
+    else:
+        generated_start_bounce = generate_orbit_odd(domain, q)
+
     cur_bounce = [0, generated_start_bounce]
     orbit = [(cur_bounce[0], cur_bounce[1])]
     i = 0
@@ -281,7 +270,7 @@ def compute_q_bounce_path_euler(domain, q, epsilon):
         if partial > grad_sup_norm:
             grad_sup_norm = partial
 
-    while (grad_sup_norm > power(10, -mp.dps)):
+    while (grad_sup_norm > max([power(q, -5), power(10, -mp.dps)])):
         grad_sup_norm = -inf
 
         for i in range(len(cur_point)):
@@ -300,3 +289,18 @@ def compute_q_bounce_path_euler(domain, q, epsilon):
         return cur_point + [(1 - point[0], point[1]) for point in reversed(cur_point[1:])]
     else:
         return cur_point + [(1 - point[0], point[1]) for point in reversed(cur_point[1:-1])]
+
+def generate_orbit(domain, q, method='euler'):
+    """ Returns an angle theta such that bounce is periodic of period q
+        on input theta, beginning at the marked point.
+    """
+
+    if (q in domain.orbits.keys()):
+        return domain.orbits[q]
+
+    if method == 'euler':
+        domain.orbits[q] = compute_q_bounce_path_euler(domain, q, 0.1)
+
+    else:
+        domain.orbits[q] = compute_q_bounce_path(domain, q)
+    return domain.orbits[q]
