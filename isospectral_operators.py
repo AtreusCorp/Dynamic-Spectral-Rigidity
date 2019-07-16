@@ -16,7 +16,7 @@ def l_q(domain, q, function):
     elif (q == 1):
         return function(0)
 
-    orbit = compute_q_bounce_path_euler(domain, q, 0.01)
+    orbit = compute_q_bounce_path_euler(domain, q, 0.1)
     summands = [fmul(function(point[0]), sin(point[1])) for point in orbit]
     return fsum(summands)
 
@@ -84,7 +84,7 @@ def l_bullet(domain, function):
     """ Returns the value of ell_bullet on function. TODO: Make sure the formula
         is correct.
     """
-    breakpoint()
+
     integrand_summand_1 = lambda t: fmul(fdiv(-1, fmul(24, power(C(domain), 2))), 
                                          power(domain.radius_of_curv(t), fdiv(-2, 3)))
 
