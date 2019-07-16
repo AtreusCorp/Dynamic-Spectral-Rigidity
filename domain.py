@@ -31,6 +31,14 @@ class Domain:
         self.lazutkin_cache = {}
         self.orbits = {}
 
+    def _clean_domain(self):
+        """ Clears the instance variables for self.
+        """
+
+        self.fourier = []
+        self.lazutkin_cache = {}
+        self.orbits = {}
+
     def _cache_lazutkin(self):
         """ Caches lazutkin values according to the lazutkin_mesh 
             parameter into domain. Helper to import_fourier.
@@ -41,7 +49,7 @@ class Domain:
 
         # TODO: Make this smarter
         while (cur_val <= 1):
-            domain.lazutkin_cache[cur_val] = lazutkin_param_non_arc(domain, cur_val)
+            self.lazutkin_cache[cur_val] = lazutkin_param_non_arc(self, cur_val)
             cur_val += lazutkin_mesh
         return
 
@@ -51,6 +59,7 @@ class Domain:
             for the domain. Coefficients are expected one per line. 
         """
 
+        self._clean_domain()
         file = open(path, "r")
 
         for line in file:
