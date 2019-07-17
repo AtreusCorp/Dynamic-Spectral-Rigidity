@@ -270,7 +270,7 @@ def compute_q_bounce_path_euler(domain, q, epsilon):
         if partial > grad_sup_norm:
             grad_sup_norm = partial
 
-    while (grad_sup_norm > max([power(q, -5), power(10, -mp.dps)])):
+    while (grad_sup_norm > power(10, -mp.dps)):
         grad_sup_norm = -inf
 
         for i in range(len(cur_point)):
