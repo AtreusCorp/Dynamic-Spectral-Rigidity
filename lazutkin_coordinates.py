@@ -19,18 +19,19 @@ def lazutkin_param_non_arc(domain, t):
 
     """
 
+    if (t == 0 or t == 1):
+        return t
+
     closest_mesh_edge = min(domain.lazutkin_cache.keys(), 
                             key=lambda elt: abs(elt - t))
+    integral = 0
+    integral += domain.lazutkin_cache[closest_mesh_edge]
+
+    if (almosteq(closest_mesh_edge, t)):
+        return integral
 
     integrand = lambda s: fmul(power(domain.radius_of_curv(s), fdiv(-2, 3)),
                                norm(domain.polar_gradient(s)))
-    integral = 0
-
-    if (closest_mesh_edge in domain.lazutkin_cache.keys()):
-        integral += domain.lazutkin_cache[closest_mesh_edge]
-    else:
-        closest_mesh_edge = 0
-
     return fadd(integral, 
                 fmul(C(domain), quad(integrand, [closest_mesh_edge, t])))
 
@@ -38,8 +39,10 @@ def inv_lazutkin_param_non_arc(domain, x):
     """ Returns the inverse of the transformation taking x (in [0, 2 pi]) to the 
         corresponding point in the parameterization by arc length.
     """
-
-    return findroot(lambda t: lazutkin_param_non_arc(domain, t) - x, 0.5)
+    
+    closest_mesh_edge = min(domain.lazutkin_cache.keys(), 
+                            key=lambda elt: abs(domain.lazutkin_cache[elt] - x))
+    return findroot(lambda t: lazutkin_param_non_arc(domain, t) - x, x0=closest_mesh_edge)
 
 def lazutkin_param_non_arc_deriv(domain, t):
     """Returns the derivative of the Lazutkin parameter for domain
