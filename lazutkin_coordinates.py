@@ -39,10 +39,19 @@ def inv_lazutkin_param_non_arc(domain, x):
     """ Returns the inverse of the transformation taking x (in [0, 2 pi]) to the 
         corresponding point in the parameterization by arc length.
     """
-    
+
     closest_mesh_edge = min(domain.lazutkin_cache.keys(), 
                             key=lambda elt: abs(domain.lazutkin_cache[elt] - x))
-    return findroot(lambda t: lazutkin_param_non_arc(domain, t) - x, x0=closest_mesh_edge)
+    if (x < domain.lazutkin_cache[closest_mesh_edge]):
+        bounds = [closest_mesh_edge - domain.lazutkin_mesh, closest_mesh_edge]
+    elif (x > domain.lazutkin_cache[closest_mesh_edge]):
+        bounds = [closest_mesh_edge, closest_mesh_edge + domain.lazutkin_mesh]
+
+    # x == domain.lazutkin_cache[closest_mesh_edge]
+    else:
+        return closest_mesh_edge
+
+    return findroot(lambda t: lazutkin_param_non_arc(domain, t) - x, bounds, solver='illinois')
 
 def lazutkin_param_non_arc_deriv(domain, t):
     """Returns the derivative of the Lazutkin parameter for domain

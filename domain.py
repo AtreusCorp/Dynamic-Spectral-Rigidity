@@ -6,7 +6,6 @@ from scipy.optimize import minimize_scalar
 mp.dps = 15                 #[default: 15]
 curvature_lower_bound = 0.1
 curvature_upper_bound = 10000
-lazutkin_mesh = 0.05
 
 def arc_length_coords(domain, x):
     """ Returns the transformation taking x (in [0, 1]) to the 
@@ -25,10 +24,11 @@ def inv_arc_length_coords(domain, s):
 class Domain:
     """ Assumed to be a Z_2 symmetric convex domain.
     """
-    def __init__(self):
+    def __init__(self, lazutkin_mesh=0.05):
 
         self.fourier = []
         self.lazutkin_cache = {}
+        self.lazutkin_mesh = lazutkin_mesh
         self.orbits = {}
 
     def _clean_domain(self):
@@ -45,12 +45,11 @@ class Domain:
         """
 
         self.lazutkin_cache[0] = 0
-        cur_val = lazutkin_mesh
+        cur_val = self.lazutkin_mesh
 
-        # TODO: Make this smarter
         while (cur_val <= 1):
             self.lazutkin_cache[cur_val] = lazutkin_param_non_arc(self, cur_val)
-            cur_val += lazutkin_mesh
+            cur_val += self.lazutkin_mesh
         return
 
 
