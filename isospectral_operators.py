@@ -127,7 +127,7 @@ def T_star_R(domain, function, precision):
     # b_l l_0 should have a 1/2 coefficient which is reflected here
 
     l_0_term = [fprod([0.5, b_term, l_0]) for b_term in b_0]
-    l_bullet_val = l_bullet(domain, P_star(domain, function))
+    l_bullet_val = l_bullet(domain, P_star(function))
     b_bullet_val = b_bullet(precision)
     l_bullet_term = [fmul(b_term, l_bullet_val) for b_term in b_bullet_val]
     sub_terms = [fadd(zero_term, bullet_term) for zero_term, bullet_term
