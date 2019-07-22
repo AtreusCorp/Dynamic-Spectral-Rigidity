@@ -4,11 +4,13 @@ from domain import *
 def C(domain):
     """ Returns the C coefficient for the Lazutkin paramterization.
     """
+    if domain.lazutkin_C:
+        return domain.lazutkin_C
 
     integrand = lambda t: fmul(power(domain.radius_of_curv(t), fdiv(-2, 3)),
                                norm(domain.polar_gradient(t)))
-    return power(quad(integrand, [0, 1]), -1)
-
+    domain.lazutkin_C = power(quadgl(integrand, [0, 1]), -1)
+    return domain.lazutkin_C
 
 def lazutkin_param_non_arc(domain, t):
     """ Returns the Lazutkin parameter for domain corresponding to the

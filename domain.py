@@ -30,6 +30,7 @@ class Domain:
         self.lazutkin_cache = {}
         self.lazutkin_mesh = lazutkin_mesh
         self.orbits = {}
+        self.lazutkin_C = None
 
     def _clean_domain(self):
         """ Clears the instance variables for self.
