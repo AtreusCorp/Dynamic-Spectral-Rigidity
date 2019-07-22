@@ -262,33 +262,33 @@ def compute_q_bounce_path_euler(domain, q, epsilon):
 
     cur_point = [inv_lazutkin_param_non_arc(domain, fdiv(i, q))
                  for i in range(q // 2 + 1)]
-    grad_sup_norm = -inf
+    cur_point[-1] = 1 / 2 if (q % 2 == 0) else cur_point[-1]
+    grad = [length_gradient(domain, i, cur_point) for i in range(len(cur_point))]
+    grad_sup_norm = norm(grad, p=inf)
 
-    for i in range(len(cur_point)):
-        partial = length_gradient(domain, i, cur_point)
-
-        if partial > grad_sup_norm:
-            grad_sup_norm = partial
-
-    while (grad_sup_norm > power(10, -mp.dps)):
-        grad_sup_norm = -inf
+    while (grad_sup_norm > power(10, -(mp.dps - 1))):
 
         for i in range(len(cur_point)):
             cur_point[i] = fadd(cur_point[i],
                 fmul(epsilon, length_gradient(domain, i, cur_point)))
-            partial = length_gradient(domain, i, cur_point)
 
-            if partial > grad_sup_norm:
-                grad_sup_norm = partial
+        grad = [length_gradient(domain, i, cur_point) for i in range(len(cur_point))]
+        grad_sup_norm = norm(grad, p=inf)
 
     outgoing_angles = [acos(cos_outgoing_angle(domain, i, cur_point))
         for i in range(len(cur_point))]
     cur_point = list(zip(cur_point, outgoing_angles))
 
     if (q % 2):
-        return cur_point + [(1 - point[0], point[1]) for point in reversed(cur_point[1:])]
+        return_point = cur_point + [(1 - point[0], point[1]) for point in reversed(cur_point[1:])]
     else:
-        return cur_point + [(1 - point[0], point[1]) for point in reversed(cur_point[1:-1])]
+        return_point = cur_point + [(1 - point[0], point[1]) for point in reversed(cur_point[1:-1])]
+
+    if (return_point != sorted(return_point, key=lambda x: x[0])):
+
+            raise Exception("Euler method converged to bad orbit.")
+
+    return return_point
 
 def generate_orbit(domain, q, method='euler'):
     """ Returns an angle theta such that bounce is periodic of period q
@@ -299,7 +299,22 @@ def generate_orbit(domain, q, method='euler'):
         return domain.orbits[q]
 
     if method == 'euler':
-        domain.orbits[q] = compute_q_bounce_path_euler(domain, q, 0.1)
+        epsilon = 0.1
+        done = 0
+        
+        while (done < 1):
+
+            if (done <= -3):
+                orbit = compute_q_bounce_path(domain, q)
+                done = 1
+            else:
+                try:
+                    orbit = compute_q_bounce_path_euler(domain, q, epsilon)
+                    done = 1
+                except:
+                    epsilon /= 2
+                    done -= 1
+        domain.orbits[q] = orbit
 
     else:
         domain.orbits[q] = compute_q_bounce_path(domain, q)
