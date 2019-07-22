@@ -33,7 +33,7 @@ def lazutkin_param_non_arc(domain, t):
     integrand = lambda s: fmul(power(domain.radius_of_curv(s), fdiv(-2, 3)),
                                norm(domain.polar_gradient(s)))
     return fadd(integral, 
-                fmul(C(domain), quad(integrand, [closest_mesh_edge, t])))
+                fmul(C(domain), quadgl(integrand, [closest_mesh_edge, t])))
 
 def inv_lazutkin_param_non_arc(domain, x):
     """ Returns the inverse of the transformation taking x (in [0, 2 pi]) to the 
