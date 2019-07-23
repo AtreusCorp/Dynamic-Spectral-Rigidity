@@ -209,6 +209,8 @@ def length_gradient(domain, i, s):
         return 0
 
     if (i == len(s) - 1):
+
+        # Add a dummy value to allow for odd case
         if (not almosteq(s[i], (1 / 2))):
             s = s.copy()
             s.append(1 - s[i])
@@ -239,6 +241,8 @@ def cos_outgoing_angle(domain, i, s):
 
     if (i == len(s) - 1):
 
+        # Add a dummy value to allow for odd and even cases
+        # A slight hack to make the function more general
         s = s.copy()
 
         if (not almosteq(s[i], (1 / 2))):
@@ -275,6 +279,8 @@ def compute_q_bounce_path_euler(domain, q, epsilon):
         grad = [length_gradient(domain, i, cur_point) for i in range(len(cur_point))]
         grad_sup_norm = norm(grad, p=inf)
 
+    # Lots of list tricks to construct the bounce path given the information
+    # found by euler's method. Relies heavily on symmetry
     outgoing_angles = [acos(cos_outgoing_angle(domain, i, cur_point))
         for i in range(len(cur_point))]
     cur_point = list(zip(cur_point, outgoing_angles))
@@ -284,27 +290,35 @@ def compute_q_bounce_path_euler(domain, q, epsilon):
     else:
         return_point = cur_point + [(1 - point[0], point[1]) for point in reversed(cur_point[1:-1])]
 
+    # Ensure that the computed path has winding number 1
     if (return_point != sorted(return_point, key=lambda x: x[0])):
-
             raise Exception("Euler method converged to bad orbit.")
-
+            
     return return_point
 
-def generate_orbit(domain, q, method='euler'):
-    """ Returns an angle theta such that bounce is periodic of period q
-        on input theta, beginning at the marked point.
+def generate_orbit(domain, q, method='euler', epsilon=0.1, euler_try_count=3):
+    """ Return an angle theta such that bounce is periodic of period q for 
+        domain on input theta, beginning at the marked point.
+
+        method -- the method used to compute bounce paths (default 'euler')
+        epsilon -- if using the euler method, this is the coefficient for the
+                   gradient step (default 0.1)
+        euler_try_count -- the number of times to retry using the euler method
+                           before defaulting to a less efficient method 
+                           (default 3)
     """
 
     if (q in domain.orbits.keys()):
         return domain.orbits[q]
 
     if method == 'euler':
-        epsilon = 0.1
         done = 0
         
+        # Try to compute the bounce path using euler's method euler_try_count
+        # times. If no success, default to the original slower method
         while (done < 1):
 
-            if (done <= -3):
+            if (done <= -euler_try_count):
                 orbit = compute_q_bounce_path(domain, q)
                 done = 1
             else:
@@ -315,7 +329,6 @@ def generate_orbit(domain, q, method='euler'):
                     epsilon /= 2
                     done -= 1
         domain.orbits[q] = orbit
-
     else:
         domain.orbits[q] = compute_q_bounce_path(domain, q)
     return domain.orbits[q]
