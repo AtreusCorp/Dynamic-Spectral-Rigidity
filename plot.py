@@ -5,7 +5,7 @@ from matplotlib import animation
 
 fourer_path = input("Enter a path to a Fourier coefficient file: ")
 circle = Domain()
-circle.import_fourier(fourer_path)
+circle.import_fourier_from_file(fourer_path)
 orbit_length = int(input("Enter the period desired: "))
 bounce_theta = 0
 bounce_angle = generate_orbit(circle, orbit_length)[0][1]

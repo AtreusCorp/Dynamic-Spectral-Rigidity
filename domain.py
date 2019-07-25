@@ -54,16 +54,12 @@ class Domain:
         return
 
 
-    def import_fourier(self, path):
-        """ Parses a text file located at path containing fourier coefficients 
-            for the domain. Coefficients are expected one per line. 
+    def import_fourier(self, fourier_list):
+        """ Import fourier coefficients in fourier_list to domain.
         """
 
         self._clean_domain()
-        file = open(path, "r")
-
-        for line in file:
-            self.fourier.append(mpf(line))
+        self.fourier = fourier_list
         arc_length = arc_length_coords(self, 1)
         self.fourier = [fdiv(coeff, arc_length) for coeff in self.fourier]
         
@@ -84,6 +80,20 @@ class Domain:
                              + "larger than {}. The maximum value was {}."
                              .format(curvature_upper_bound, curvature_maximum))
         self._cache_lazutkin()
+        return
+
+    def import_fourier_from_file(self, path):
+        """ Parse the text file located at path containing fourier coefficients 
+            for the domain. Coefficients are expected one per line. 
+        """
+
+        self._clean_domain()
+        file = open(path, "r")
+        fourier_list = []
+
+        for line in file:
+            fourier_list.append(mpf(line))
+        self.import_fourier(fourier_list)
         return
 
     def radius(self, theta):
