@@ -272,10 +272,13 @@ def compute_q_bounce_path_euler(domain, q, epsilon):
 
     while (grad_sup_norm > power(10, -(mp.dps - 1))):
 
-        for i in range(len(cur_point)):
-            cur_point[i] = fadd(cur_point[i],
-                fmul(epsilon, length_gradient(domain, i, cur_point)))
+        new_point = []
 
+        for i in range(len(cur_point)):
+            new_point[i].append(fadd(cur_point[i],
+                fmul(epsilon, length_gradient(domain, i, cur_point))))
+
+        cur_point = new_point
         grad = [length_gradient(domain, i, cur_point) for i in range(len(cur_point))]
         grad_sup_norm = norm(grad, p=inf)
 
