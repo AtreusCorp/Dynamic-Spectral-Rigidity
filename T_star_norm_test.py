@@ -4,7 +4,7 @@ from operator_norms import *
 mp.dps = int(input("Enter mp.dps: "))
 domain = Domain()
 fourer_path = input("Enter a path to a Fourier coefficient file: ")
-domain.import_fourier(fourer_path)
+domain.import_fourier_from_file(fourer_path)
 function_len = int(input("Enter length of test function: "))
 list = []
 for i in range(1, function_len):

@@ -3,21 +3,21 @@ from domain import *
 from isospectral_operators import *
 
 def fourier_basis(j):
-    """ Returns the function e_j(x) = cos (2 pi j x) corresponding to the 
+    """ Returns the function e_j(x) = cos (2 pi j x) corresponding to the
         fourier basis.
     """
 
     return lambda x: cos(fprod([2, pi, j, x]))
 
-def T_lazutkin_matrix(domain, i, j):
+def T_lazutkin_matrix(domain, q, j):
     """ Returns the ith element of T_lazutkin(e_j).
     """
 
-    return l_q_lazutkin(domain, i, fourier_basis(j))
+    return l_tilde_q(domain, q, fourier_basis(j))
 
 def general_operator_gamma_norm(matrix, gamma, max_j, max_q):
     """ Returns the gamma operator norm of matrix, summing up to max_j and
-        considering the sup up to max_q. Assumed that matrix is a function 
+        considering the sup up to max_q. Assumed that matrix is a function
         accepting two arguments i,j and not an array () for efficiency.
     """
 
@@ -33,7 +33,7 @@ def general_operator_gamma_norm(matrix, gamma, max_j, max_q):
 
 def general_operator_gamma_to_sup_norm(matrix, gamma, max_j, max_q):
     """ Returns the gamma operator norm of matrix, summing up to max_j and
-        considering the sup up to max_q. Assumed that matrix is a function 
+        considering the sup up to max_q. Assumed that matrix is a function
         accepting two arguments i,j and not an array () for efficiency.
     """
 
@@ -48,7 +48,7 @@ def general_operator_gamma_to_sup_norm(matrix, gamma, max_j, max_q):
     return max_j_sum
 
 def operator_diff_finite_sum(T_star_R_matrix, gamma, q, max_j):
-    """ Returns the sum of the qth row of the matrix of T_star_R up to the 
+    """ Returns the sum of the qth row of the matrix of T_star_R up to the
         max_jth element, scaled according to the h_gamma norm.
     """
     id = lambda i, j: 1 if i == j else 0
@@ -56,7 +56,7 @@ def operator_diff_finite_sum(T_star_R_matrix, gamma, q, max_j):
     j = 1
 
     for j in range(1, max_j):
-        sum_list.append(fprod([power(q, gamma), power(j, -gamma), 
+        sum_list.append(fprod([power(q, gamma), power(j, -gamma),
                                fabs(T_star_R_matrix[j][q] - id(q, j))]))
     return sum_list
 
@@ -75,7 +75,7 @@ def T_star_R_operator_diff_from_id(domain, gamma, max_j, max_q):
     max_j_sum = -1
     q = 1
     while (q < max_q):
-        
+
         temp_j_sum = fsum(operator_diff_finite_sum(T_star_R_matrix, gamma, q, max_j))
         max_j_sum = temp_j_sum if temp_j_sum > max_j_sum else max_j_sum
         q += 1
