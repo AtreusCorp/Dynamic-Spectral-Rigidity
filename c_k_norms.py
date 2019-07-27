@@ -1,6 +1,8 @@
 from domain import *
 
 def c_k_domain_diff(domain_1, domain_2, k):
+    """ Compute the C^k norm of domain_1.radius - domain_2.radius.
+    """
 
     domain_1_kth_deriv = lambda s: matrix((diff(lambda t: domain_1.polar(t)[0], s, n=k), 
                                            diff(lambda t: domain_1.polar(t)[1], s, n=k)))

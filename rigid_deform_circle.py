@@ -1,5 +1,7 @@
 from operator_norms import *
 
+# Measure the bounds on fourier coefficients that ensure spectral rigidity.
+
 mp.dps = 20
 precision_step = 1
 fourier_length = 20
