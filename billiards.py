@@ -275,7 +275,7 @@ def compute_q_bounce_path_euler(domain, q, epsilon):
         new_point = []
 
         for i in range(len(cur_point)):
-            new_point[i].append(fadd(cur_point[i],
+            new_point.append(fadd(cur_point[i],
                 fmul(epsilon, length_gradient(domain, i, cur_point))))
 
         cur_point = new_point
