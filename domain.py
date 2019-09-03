@@ -39,6 +39,7 @@ class Domain:
         self.fourier = []
         self.lazutkin_cache = {}
         self.orbits = {}
+        self.lazutkin_C = None
 
     def _cache_lazutkin(self):
         """ Caches lazutkin values according to the lazutkin_mesh 
