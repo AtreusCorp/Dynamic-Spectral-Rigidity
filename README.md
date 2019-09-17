@@ -12,14 +12,14 @@ representation of the coefficient of the nth cosine term. Run plot.py
 in Python 3 and specify the path of the text file created previously
 along with period desired when prompted.
 
-To compute $`||T_{*_R} - Id||_\gamma`$, run norm_test.py. The prompt
+To compute <img src="http://www.sciweavers.org/tex2img.php?eq=%7C%7C%5Cmathcal%7BT%7D_%7B%2A_R%7D%20-%20Id%7C%7C_%5Cgamma&bc=White&fc=Black&im=jpg&fs=12&ff=ccfonts,eulervm&edit=0" align="center" border="0" alt="||\mathcal{T}_{*_R} - Id||_\gamma" width="87" height="19" />, run norm_test.py. The prompt
 for mp.dps specifies the decimal place precision of all computations,
 q and j are as specified in the paper according to the operator norm
-(page 295), and gamma is $`\gamma`$ in the norm computation.
+(page 295), and gamma is <img src="http://www.sciweavers.org/tex2img.php?eq=%5Cgamma&bc=White&fc=Black&im=jpg&fs=12&ff=ccfonts,eulervm&edit=0" align="center" border="0" alt="\gamma" width="12" height="14" /> in the norm computation.
 
-T_star_norm_test.py computes $`T_{*_R}`$ on a function with simple
+T_star_norm_test.py computes <img src="http://www.sciweavers.org/tex2img.php?eq=%5Cmathcal%7BT%7D_%7B%2A_R%7D&bc=White&fc=Black&im=jpg&fs=12&ff=ccfonts,eulervm&edit=0" align="center" border="0" alt="\mathcal{T}_{*_R}" width="25" height="19" /> on a function with simple
 fourier coefficients (see code for details) and allows the user to
-compute $`|\cdot|_\gamma`$ of the result with a specified $`\gamma`$.
+compute <img src="http://www.sciweavers.org/tex2img.php?eq=%7C%5Ccdot%7C_%5Cgamma&bc=White&fc=Black&im=jpg&fs=12&ff=ccfonts,eulervm&edit=0" align="center" border="0" alt="|\cdot|_\gamma" width="32" height="19" /> of the result with a specified <img src="http://www.sciweavers.org/tex2img.php?eq=%5Cgamma&bc=White&fc=Black&im=jpg&fs=12&ff=ccfonts,eulervm&edit=0" align="center" border="0" alt="\gamma" width="12" height="14" />.
 
 The basic structure of the code begins with domain.py in which the
 domain is fully specified, notice methods for importing Fourier
