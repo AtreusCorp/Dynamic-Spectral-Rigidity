@@ -12,14 +12,14 @@ representation of the coefficient of the nth cosine term. Run plot.py
 in Python 3 and specify the path of the text file created previously
 along with period desired when prompted.
 
-To compute <img src="http://www.sciweavers.org/tex2img.php?eq=%7C%7C%5Cmathcal%7BT%7D_%7B%2A_R%7D%20-%20Id%7C%7C_%5Cgamma&bc=White&fc=Black&im=jpg&fs=12&ff=ccfonts,eulervm&edit=0" align="center" border="0" alt="||\mathcal{T}_{*_R} - Id||_\gamma" width="87" height="19" />, run norm_test.py. The prompt
+To compute `||T_{*_R} - Id||_\gamma`, run norm_test.py. The prompt
 for mp.dps specifies the decimal place precision of all computations,
 q and j are as specified in the paper according to the operator norm
-(page 295), and gamma is <img src="http://www.sciweavers.org/tex2img.php?eq=%5Cgamma&bc=White&fc=Black&im=jpg&fs=12&ff=ccfonts,eulervm&edit=0" align="center" border="0" alt="\gamma" width="12" height="14" /> in the norm computation.
+(page 295), and gamma is `\gamma` in the norm computation.
 
-T_star_norm_test.py computes <img src="http://www.sciweavers.org/tex2img.php?eq=%5Cmathcal%7BT%7D_%7B%2A_R%7D&bc=White&fc=Black&im=jpg&fs=12&ff=ccfonts,eulervm&edit=0" align="center" border="0" alt="\mathcal{T}_{*_R}" width="25" height="19" /> on a function with simple
+T_star_norm_test.py computes `T_{*_R}` on a function with simple
 fourier coefficients (see code for details) and allows the user to
-compute <img src="http://www.sciweavers.org/tex2img.php?eq=%7C%5Ccdot%7C_%5Cgamma&bc=White&fc=Black&im=jpg&fs=12&ff=ccfonts,eulervm&edit=0" align="center" border="0" alt="|\cdot|_\gamma" width="32" height="19" /> of the result with a specified <img src="http://www.sciweavers.org/tex2img.php?eq=%5Cgamma&bc=White&fc=Black&im=jpg&fs=12&ff=ccfonts,eulervm&edit=0" align="center" border="0" alt="\gamma" width="12" height="14" />.
+compute `|\cdot|_\gamma` of the result with a specified `\gamma`.
 
 The basic structure of the code begins with domain.py in which the
 domain is fully specified, notice methods for importing Fourier
@@ -40,3 +40,11 @@ Lazutkin coordinates.
 operator_norms.py contains all functions relevant to norms of the
 isospectral (and general) linear operators. Any modification of norm
 computations can be made here and here alone.
+
+Copyright 2019 University of Toronto
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+> THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
